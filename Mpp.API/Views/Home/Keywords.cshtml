@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Mpp.BUSINESS.DataModel.KeywordModel>
+@{
+    ViewBag.Title = "Keywords";
+}
+
+<h3>Keywords</h3>
+<div>
+    <div style="text-align:center;padding:10px;">
+        @Html.ActionLink("Go Back", "Index", "Home", htmlAttributes: new { @style = "padding-right:30px;" })
+        @Html.ActionLink("Logout", "Logout", "Home")
+        <span style="padding-left:120px;"><b>Total Records:</b> @Model.Count()</span>
+    </div>
+</div>
+<div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>keywordId</th>
+                <th>adGroupId</th>
+                <th>campaignId</th>
+                <th>keywordText</th>
+                <th>matchType</th>
+                <th>state</th>
+                <th>dailyBudget</th>
+                <th>bid</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.keywordId</td>
+                    <td>@r.adGroupId</td>
+                    <td>@r.campaignId</td>
+                    <td>@r.keywordText</td>
+                    <td>@r.matchType</td>
+                    <td>@r.state</td>
+                    <td>@r.dailyBudget</td>
+                    <td>@r.bid</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

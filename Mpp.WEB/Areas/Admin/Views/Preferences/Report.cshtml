@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag._TopMenu4 = "active";
+    ViewBag.RepCls = "active";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .ui-autocomplete {
+        max-height: 100px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+
+    .ui-menu {
+        width: 240px !important;
+    }
+</style>
+<div class="settingContainer withSiderbar clearfix" ng-controller="ClientReportscontroller">
+    @Html.Partial("_Settingspartial")
+    <div class="contentRight" style="padding-left: 222px !important">
+        
+        <div class="filters">
+
+            <div class="row"><div class="col-md-1"><p style="padding:0 -1px 35px; font-weight:400;font-size:28px">Client<p></div>
+    <div class="col-md-11">
+        <input id="srchClient" class="form-control" placeholder="Select Client" style="height:38px;width:240px">
+    </div>
+            </div>
+            </div>
+
+
+    <div class="row">
+        <div class="col-md-9">
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#KeyWordBulk" aria-controls="KeyWordBulk" role="tab" data-toggle="tab">Keyword Bulk</a></li>
+
+                <li role="presentation"><a href="#SrchTermBulk" aria-controls="SrchTermBulk" role="tab" data-toggle="tab">SearchTerm Bulk</a></li>
+
+                <li role="presentation"><a href="#KeyWordUpload" aria-controls="KeyWordUpload" role="tab" data-toggle="tab">Keyword Optimized</a></li>
+                <li role="presentation"><a href="#SearchTermUpload" aria-controls="SearchTermUpload" role="tab" data-toggle="tab">Search Term Optimized </a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="DCContent">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane contentBox active" id="KeyWordBulk">
+                <table>
+                    <thead>
+                        <tr>
+
+                            <th>File</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="r in KeyWordBulkDates">
+                            <td>
+                                <div>Sponsored Products Bulk_{{r.Date}}</div>
+                            </td>
+
+                            <td>
+                                <div class="downloadFile" ng-click="DownLoadReport(r.Date,1)"><i class="fa fa-download"></i> Download</div>
+                            </td>
+                        </tr>
+                        <tr ng-show="KeyWordBulkDates==null">
+                            <td colspan="2">
+                                No Records found!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div role="tabpanel" class="tab-pane contentBox" id="SrchTermBulk">
+                <table>
+                    <thead>
+                        <tr>
+
+                            <th>File</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-repeat="r in SearchTermBulkDates">
+                            <td>
+                                <div>Search Term Bulk_{{r.Date}}</div>
+                            </td>
+
+                            <td>
+                                <div class="downloadFile" ng-click="DownLoadReport(r.Date,3)"><i class="fa fa-download"></i> Download</div>
+                            </td>
+                        </tr>
+                        <tr ng-show="SearchTermBulkDates==null">
+                            <td colspan="2">
+                                No Records found!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div role="tabpanel" class="tab-pane contentBox " id="KeyWordUpload">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr ng-repeat="r in UpldKeyWordOptimizeDates">
+                            <td>
+                                <div>Keywords Optimized_{{r.Date}}</div>
+                            </td>
+
+                            <td>
+                                <div class="downloadFile" ng-click="DownLoadReport(r.Date,5)"><i class="fa fa-download"></i> Download</div>
+                            </td>
+                        </tr>
+                        <tr ng-show="UpldKeyWordOptimizeDates==null">
+                            <td colspan="2">
+                            No Records found!
+                        </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div role="tabpanel" class="tab-pane contentBox" id="SearchTermUpload">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-repeat="r in UpldSearchTermOptimizeDates">
+                            <td>
+                                <div>Search Term Optimized_{{r.Date}}</div>
+                            </td>
+
+                            <td>
+                                <div class="downloadFile" ng-click="DownLoadReport(r.Date,6)"><i class="fa fa-download"></i> Download</div>
+                            </td>
+                        </tr>
+                        <tr ng-show="UpldSearchTermOptimizeDates==null">
+                            <td colspan="2">
+                                No Records found!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div></div>
+            @section Scripts {
+                <script src="~/Scripts/Angular/Admin/app.js"></script>
+                <script src="~/Scripts/Angular/Admin/ClientReportscontroller.js"></script>
+                <script src="~/Scripts/Angular/Admin/Service.js"></script>
+                <script src="~/Scripts/Angular/Admin/filter.js"></script>
+            }
+
+

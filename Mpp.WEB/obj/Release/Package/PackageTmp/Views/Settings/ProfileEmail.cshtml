@@ -1,0 +1,161 @@
+﻿@using Mpp.UTILITIES
+
+@{
+    ViewBag.Title = "Profile";
+    ViewBag._NavProfile = "active";
+    Layout = "~/Views/Shared/_Settings.cshtml";
+}
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">@Html.ActionLink("Edit Email", "ProfileEmail", routeValues: null)</li>
+    <li role="presentation">@Html.ActionLink("Change Password", "ProfilePassword", routeValues: null)</li>
+</ul>
+
+<div class="tab-content">
+    <div>
+        <div class="profileSection">
+            <div class="input-group">
+                <label class="input-group-addon">Email address*</label>
+                <input type="email" id="txtuseremail" value="@SessionData.Email" class="form-control">
+                <div class="text-danger" id="err_useremail"></div>
+            </div>
+            <div class="input-group" id="divverifyemail" style="display:none;">
+                <div class="alert alert-warning">
+                    <p><small>A mail to verify your email address has been sent. Please verify your email address. Check your Junk folder as well.</small></p>
+                    <button id="btnresend" class="btn btn-sm btn-warning">Resend Verification Mail</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="formActions">
+                    <button id="btnuseremail" class="btn btn-info pull-left">Update Email</button>
+                    <button id="btnemailcancel" class="btn btn-default pull-left">Cancel</button>
+                    <input id="hdnemail" type="hidden" />
+                </div>
+            </div>
+            <div class="form-group text-danger" id="divResponse">
+            </div>
+        </div>
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+            @Scripts.Render("~/bundles/jqueryajax")
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var isValid = false;
+                    $('#hdnemail').val('@SessionData.Email');
+                    $('#txtuseremail').blur(function () {
+                        $('#divverifyemail').hide();
+                        return profile_validate();
+                    });
+                });
+
+                function profile_validate()
+                {
+                    var nemail = $('#txtuseremail').val();
+                    var oemail = $('#hdnemail').val();
+                    if (nemail == "") {
+                        $('#err_useremail').text("Email must be entered");
+                        $('#txtuseremail').focus();
+                        isValid = false;
+                    } else if(nemail == oemail){
+                        $('#err_useremail').text('');
+                        isValid = false;
+                    }else{
+                        isValid = validateEmail(nemail);
+                        if(isValid){
+                            $('#err_useremail').text('');
+                            isValid = true;
+                        }
+                        else{
+                            $('#err_useremail').text('Email is not valid!');
+                        }
+                    }
+                    return isValid;
+                }
+
+                $('#btnuseremail').click(function () {
+                    isValid = profile_validate();
+                    if (isValid) {
+                        $("#settingspinner").show();
+                        _ajaxUpdateEmail();
+                    }
+                })
+
+                $('#btnresend').click(function () {
+                    $("#settingspinner").show();
+                    _ajaxResendEmail();
+                })
+
+                $('#btnemailcancel').click(function () {
+                    $('#txtuseremail').val('@SessionData.Email');
+                    $('#err_useremail').text('');
+                    $('#divResponse').text('');
+                })
+
+                function _ajaxUpdateEmail()
+                {
+                    var email = $('#txtuseremail').val();
+                    var _url = '@Url.Action("UpdateUserEmail", "Settings")';
+                    $.ajax({
+                        type: "POST",
+                        url: _url,
+                        data: JSON.stringify({ email: email }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        success: function (data, status) {
+                            if (status == "success") {
+                                var msg;
+                                if (data == "") {
+                                    $('#hdnemail').val(email);
+                                    msg = "Your email has been updated successfully. Please check your email to verify the new email address";
+                                    $('#divverifyemail').show();
+                                }
+                                else {
+                                    msg = data;
+                                }
+                                $('#divResponse').html(msg);
+                                $("#settingspinner").hide();
+                            }
+                        },
+                        error: function (status) {
+                            $('#divResponse').html("Error! Please try again");
+                            $("#settingspinner").hide();
+                        }
+                    });
+                }
+
+                function _ajaxResendEmail() {
+                    var email = $('#txtuseremail').val();
+                    var _url = '@Url.Action("ResendEmail", "Settings")';
+                    $.ajax({
+                        type: "POST",
+                        url: _url,
+                        data: JSON.stringify({ email: email }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: false,
+                        success: function (data, status) {
+                            if (status == "success") {
+                                var msg;
+                                if (data == "") {
+                                    msg = "Email has been sent! Please re-verfiy your account";
+                                    $('#divverifyemail').hide();
+                                }
+                                else {
+                                    msg = data;
+                                }
+                                $('#divResponse').html(msg);
+                                $("#settingspinner").hide();
+                            }
+                        },
+                        error: function (status) {
+                            $('#divResponse').html("Error! Please try again");
+                            $("#settingspinner").hide();
+                        }
+                    });
+                }
+            </script>
+            }
+    </div>
+</div>

@@ -1,0 +1,74 @@
+﻿@model Mpp.WEB.Models.LoginViewModel
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+
+</head>
+<body class="darkBg">
+    <div class="mainContainer">
+        <header class="mainHeader clearfix">
+            <div class="logo pull-left">
+                <a href="#"><img src="~/Content/images/logo.png" alt=""></a>
+            </div>
+        </header>
+        <div class="mainContent">
+            <div class="container">
+                <div class="col-md-8 col-md-push-2">
+                    <div class="md-box" style="margin-top:100px;">
+                        <h1>LOGIN</h1>
+                        @using (Html.BeginForm("Login", "Account", routeValues: new { area= "Admin" }, method: FormMethod.Post))
+                        { 
+                            @*@Html.ValidationSummary()*@
+                            @*@Html.AntiForgeryToken()*@
+                            <div class="form-group">
+                                @Html.TextBoxFor(model => model.Email, htmlAttributes: new { @class = "form-control", placeholder = "Email Address" })
+                                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.PasswordFor(model => model.Password, htmlAttributes: new { @class = "form-control", placeholder = "Password" })
+                                @Html.ValidationMessageFor(model => model.Password, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-block btn-info">Login</button>
+                            </div>
+                            if (Convert.ToString(TempData["IsValid"]) != "")
+                            {
+                                <div class="form-group resultmsg text-danger">
+                                    <span>@TempData["IsValid"]</span>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="aLinks">
+                        <ul class="list-unstyled">
+                            <li></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mainFooter clearfix">
+            <div class="logoFooter pull-left"><a href=""><img src="~/Content/images/logo-footer.jpg" alt=""></a></div>
+            <nav class="footerNav pull-right">
+                <ul class="list-unstyled">
+                    <li>Copyright © @DateTime.Now.Year, MyPPCPal</li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

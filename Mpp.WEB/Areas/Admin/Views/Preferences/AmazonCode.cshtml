@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "AmazonCode";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag._TopMenu4 = "active";
+    ViewBag.PrefCls = "active";
+}
+<div class="settingContainer withSiderba r clearfix" ng-controller="amazonCodeCtrl">
+    @Html.Partial("_Settingspartial")
+    <div class="contentRight">
+        <div class="DCContent">
+            <div class="DCCTable">
+                <table width="100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>LoginDate</th>
+                            <th>LoginTime</th>
+                            <th>CodeRequired</th>
+                            <th>Code</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="r in AmazonCodeModal">
+                            <td>{{r.Id}}</td>
+                            <td>{{r.Date | date}}</td>
+                            <td>{{r.Time}}</td>
+                            <td>{{r.Required}}</td>
+                            <td>
+                                <div class="status" ng-if="r.Required == true">
+                                    <input type="text" id="txtAuthCode" value="{{r.Code}}" />*
+                                </div>
+                                <div class="status" ng-if="r.Required == false">
+                                    <span>{{r.Code | removezero}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status" ng-if="r.Required == true">
+                                    <input type="button" id="btnCode" value="Save" ng-click="save2FAcode(r.Id)"/>
+                                </div>
+                                <div class="status" ng-if="r.Required == false">
+                                    <span>-</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-show="!AmazonCodeModal.length">
+                            <td colspan="6">
+                                No codes are required right now!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="padding-top:10px;"><span>Note: Only coderequired record set to true is active upto 3 minutes since logintime</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="msg-box" style="display:none">
+        <span id="divresponse"></span>
+    </div>
+    <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="adminspinner"></i>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/Angular/Admin/app.js"></script>
+    <script src="~/Scripts/Angular/Admin/SettingsController.js"></script>
+    <script src="~/Scripts/Angular/Admin/Service.js"></script>
+    <script src="~/Scripts/Angular/Admin/filter.js"></script>
+}

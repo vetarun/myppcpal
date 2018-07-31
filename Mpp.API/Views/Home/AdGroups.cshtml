@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Mpp.BUSINESS.DataModel.AdGroupModel>
+@{
+    ViewBag.Title = "Adgroups";
+}
+
+<h3>AdGroups</h3>
+<div style="text-align:center;padding:10px;">
+    @Html.ActionLink("Go Back", "Index", "Home", htmlAttributes: new { @style = "padding-right:30px;" })
+    @Html.ActionLink("Logout", "Logout", "Home")
+    <span style="padding-left:120px;"><b>Total Records:</b> @Model.Count()</span>
+</div>
+
+<div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>AdGroupId</th>
+                <th>campaignId</th>
+                <th>name</th>
+                <th>state</th>
+                <th>dailyBudget</th>
+                <th>defaultBid</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.adGroupId</td>
+                    <td>@r.campaignId</td>
+                    <td>@r.name</td>
+                    <td>@r.state</td>
+                    <td>@r.dailyBudget</td>
+                    <td>@r.defaultBid</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

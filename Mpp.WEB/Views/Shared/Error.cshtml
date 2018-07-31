@@ -1,0 +1,62 @@
+﻿@model System.Web.Mvc.HandleErrorInfo 
+@{ 
+    ViewBag.Title = "Error";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    <style>
+        .mainContent{
+             text-align:center;
+        }
+       .mainContent a{
+        color:goldenrod;
+        padding-top:10px;
+        }
+        a:hover{
+            color:goldenrod;
+            text-decoration:underline;
+        }
+        h3{
+            color:#fff;
+            margin-top:260px;
+        }
+    </style>
+</head>
+<body class="darkBg">
+    <div class="mainContainer">
+        <header class="mainHeader clearfix">
+            <div class="logo pull-left">
+                <a href="#"><img src="~/Content/images/logo.png" alt=""></a>
+            </div>
+        </header>
+        <div class="mainContent">
+            <h3>
+                Sorry, an error occurred while processing your request. Please contact admin@myppcpal.com
+            </h3>
+            @if (Session["UserID"] != null)
+            {
+            <h4>@Html.ActionLink("Go Back To Home Page", "Dashboard", "Main")</h4>
+            }
+            <br />
+            <br />  
+        </div>
+        <footer class="mainFooter clearfix">
+            <div class="logoFooter pull-left"><a href=""><img src="~/Content/images/logo-footer.jpg" alt=""></a></div>
+            <nav class="footerNav pull-right">
+                <ul class="list-unstyled">
+                    <li>Copyright © @DateTime.Now.Year, MyPPCPal</li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </div>
+ </body>
+</html>

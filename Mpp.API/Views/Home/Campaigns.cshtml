@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Mpp.BUSINESS.DataModel.CampaignModel>
+@{
+    ViewBag.Title = "Campaigns";
+}
+<h3>Campaigns</h3>
+<div style="text-align:center;padding:10px;">
+    @Html.ActionLink("Go Back", "Index", "Home", htmlAttributes: new { @style = "padding-right:30px;" })
+    @Html.ActionLink("Logout", "Logout", "Home")
+    <span style="padding-left:120px;"><b>Total Records:</b> @Model.Count()</span>
+</div>
+
+<div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>CampaignId</th>
+                <th>Name</th>
+                <th>CampaignType</th>
+                <th>TargetingType</th>
+                <th>State</th>
+                <th>DailyBudget</th>
+                <th>StartDate</th>
+                <th>CreationDate</th>
+                <th>LastUpdatedDate</th>
+                <th>PremiumBidAdjustment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.campaignId</td>
+                    <td>@r.name</td>
+                    <td>@r.campaignType</td>
+                    <td>@r.targetingType</td>
+                    <td>@r.state</td>
+                    <td>@r.dailyBudget</td>
+                    <td>@r.startDate</td>
+                    <td>@r.creationDate</td>
+                    <td>@r.lastUpdatedDate</td>
+                    <td>@r.premiumBidAdjustment</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

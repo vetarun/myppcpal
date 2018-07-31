@@ -1,0 +1,14 @@
+﻿<aside class="sidebar" style="width:190px !important">
+    <h2>Settings</h2>
+    <ul class="clearfix list-unstyled">
+        <li id="tab_billing" class="@ViewBag.PrefCls">
+            <a href="@Url.Action("AmazonCode","Preferences")"><i class="fa fa-credit-card"></i>Two-Factor</a>
+        </li>
+        <li id="tab_billing" class="@ViewBag.LogCls">
+            <a href="@Url.Action("Log","Preferences")"><i  class="fa fa-history"></i>Logs</a>
+        </li>
+        <li id="tab_billing" class="@ViewBag.RepCls">
+            <a href="@Url.Action("Report","Preferences")"><i class="fa fa-file" ></i>Reports</a>
+        </li>
+    </ul>
+</aside>

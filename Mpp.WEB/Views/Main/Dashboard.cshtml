@@ -1,0 +1,909 @@
+﻿<!doctype html>
+@{
+    Layout = null;
+    ViewBag._TopMenu1 = "active";
+    var trialEnd = (DateTime)ViewBag.TrilEnd;
+    var daysRemain = (trialEnd - DateTime.Now).TotalDays;
+    var plan = (int)ViewBag.plan;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    <style>
+        .searchbox{
+            width: 250px;
+            float:left;
+            background:none;
+            font-family:Arial, FontAwesome;
+            display: inline-block !important;
+            margin-right:20px;
+        }
+        .showdivmsg {
+            display: inline-block !important;
+        }
+        #chart_container{
+            height:300px !important;
+        }
+        select:hover{
+            cursor:pointer;
+        }
+        .table{
+            margin-bottom:0px !important;
+        }
+        .table.table-bordered.table-striped a:hover{
+            text-decoration:underline;
+            color:#337ab7;
+        }
+        .table.table-bordered.table-striped a{
+            color:#337ab7;
+        }
+        .table.table-bordered.table-striped .header, .table.tablesorter thead tr .header {
+        background-image: url(../Content/images/bg.png);
+        background-repeat: no-repeat;
+        background-position: center right 5px;
+        cursor: pointer;
+        }
+        .table.table-bordered.table-striped .headerSortUp, .table.tablesorter thead tr .headerSortUp {
+            background-image: url(../Content/images/asc.png);
+        }
+        .table.table-bordered.table-striped .headerSortDown , .table.tablesorter thead tr .headerSortDown {
+            background-image: url(../Content/images/desc.png);
+        }
+
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none!important;
+        }
+        .ul-chart li{
+            float:left;
+        }
+        .ul-chart li:first-child{
+            color:rgb(124, 181, 236);
+            padding-right:30px;
+        }
+        .ul-chart li:last-child{
+            color:gray;
+        }
+        .btn-sm{
+            font-weight:bold;
+            font-size:13px !important;
+        }
+        .graph-spinner{
+            font-size:40px !important;
+            top:120px !important;
+        }
+        @@media (min-width: 768px) {.container {width: 90%;max-width: 1250px;}}
+    </style>
+</head>
+<body ng-app="dashboardApp" ng-controller="dashboardModal" class="ng-cloak">
+	<div class="mainContainer">
+		@Html.Partial("_Header")
+		<div class="mainContent">
+			<div class="mainWrap" style="padding: 0;">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="dashboardContainer clearfix">
+							<div class="chartsContainer clearfix">
+								<div class="col-md-4">
+									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Spend')">
+										<div id="spend" style="height:300px;"></div>
+										<i id="spend-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Sales')">
+										<div id="sales" style="height:300px;"></div>
+										<i id="sales-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Acos')">
+										<div id="acos" style="height:300px;"></div>
+										<i id="acos-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+									</div>
+								</div>
+							</div>
+							<!-- chartsContainer end -->
+							<div class="container">
+								<div class="dashboardTabs">
+
+									<!-- Nav tabs -->
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" class="active"><a href="#topCampaigns" ng-click="LoadDashboard(0)" aria-controls="topCampaigns" role="tab" data-toggle="tab">Performance by Campaigns</a></li>
+                                        <li role="presentation"><a href="#topAdgroups" ng-click="LoadDashboard(2)" aria-controls="topAdgroups" role="tab" data-toggle="tab">Performance by Ad Groups</a></li>
+                                        <li role="presentation"><a href="#topKeywords" ng-click="LoadDashboard(1)" aria-controls="topKeywords" role="tab" data-toggle="tab">Performance by Keywords</a></li>
+                                        @* #158 *@
+                                        @*<li role="presentation"><a href="#topOptimizations" ng-click="LoadDashboard(3)" aria-controls="topOptimizations" role="tab" data-toggle="tab">Optimizations Report</a></li>*@
+                                    </ul>
+
+									<!-- Tab panes -->
+									<div class="tab-content">
+										<div role="tabpanel" class="tab-pane active" id="topCampaigns">
+											<table class="table table-bordered table-striped">
+												<thead>
+													<tr>
+														<th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
+														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="r in pagedItems2.records">
+														<td>{{r.CampaignName}}</td>
+														<td>{{r.ACoS}}%</td>
+														<td>{{r.Spend | currency}}</td>
+														<td>{{r.Sales | currency}}</td>
+														<td>{{r.Impressions}}</td>
+														<td>{{r.Clicks}}</td>
+														<td>{{r.CTR}}%</td>
+														<td>{{r.CostPerClick | currency}}</td>
+													</tr>
+													<tr ng-show="showmsg">
+														<td colspan="8">
+															No Records found!
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="viewMoreData">
+												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(0)">View More <i class="fa fa-angle-right"></i></button>
+											</div>
+										</div>
+										<div role="tabpanel" class="tab-pane" id="topAdgroups">
+											<table class="table table-bordered table-striped">
+												<thead>
+													<tr>
+														<th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
+														<th ng-class="selectedCls('Campaign')" ng-click="dbsort_by('Campaign')">Campaign</th>
+														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="r in pagedItems2.records">
+														<td>{{r.AdGroupName}}</td>
+														<td>{{r.Campaign}}</td>
+														<td>{{r.ACoS}}%</td>
+														<td>{{r.Spend | currency}}</td>
+														<td>{{r.Sales | currency}}</td>
+														<td>{{r.Impressions}}</td>
+														<td>{{r.Clicks}}</td>
+														<td>{{r.CTR}}%</td>
+														<td>{{r.CostPerClick | currency}}</td>
+													</tr>
+													<tr ng-show="showmsg">
+														<td colspan="9">
+															No Records found!
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="viewMoreData">
+												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataAdInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(2)">View More <i class="fa fa-angle-right"></i></button>
+											</div>
+										</div>
+										<div role="tabpanel" class="tab-pane" id="topKeywords">
+											
+											<table class="table table-bordered table-striped">
+												<thead>
+
+													<tr>
+														<th ng-class="selectedCls('KeywordName')" ng-click="dbsort_by('KeywordName')">Keyword</th>
+														<th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
+														<th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
+														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="r in pagedItems2.records">
+														<td>{{r.KeywordName}}</td>
+														<td>{{r.CampaignName}}</td>
+														<td>{{r.AdGroupName}}</td>
+														<td>{{r.ACoS}}%</td>
+														<td>{{r.Spend | currency}}</td>
+														<td>{{r.Sales | currency}}</td>
+														<td>{{r.Impressions}}</td>
+														<td>{{r.Clicks}}</td>
+														<td>{{r.CTR}}%</td>
+														<td>{{r.CostPerClick | currency}}</td>
+													</tr>
+													<tr ng-show="showmsg">
+														<td colspan="10">
+															No Records found!
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="viewMoreData">
+												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataKeyInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(1)">View More <i class="fa fa-angle-right"></i></button>
+											</div>
+										</div>
+                                        @* #158 *@
+										@*<div role="tabpanel" class="tab-pane" id="topOptimizations"  style=" height:200px; overflow-y:auto;">
+											<table class="table table-bordered table-striped">
+												<thead>
+													<tr>
+														<th ng-class="selectedCls('CampaignName')" ng-click="dbsortOptimize('CampaignName')">CampaignName</th>
+														<th ng-class="selectedCls('ModifiedOn')" ng-click="dbsortOptimize('ModifiedOn')">ModifiedOn</th>
+													</tr>
+												</thead>
+												<tbody >
+													<tr ng-repeat="r in pagedItems2.records">
+														<td  style="cursor:pointer;" ng-click="getKeyLog(r.CampID,r.CampaignName,0)">{{r.CampaignName}}</td>
+
+														<td>{{r.ModifiedOn}}</td>
+													</tr>
+													<tr ng-show="showmsg">
+														<td colspan="8">
+															No Records found!
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="viewMoreData">
+												</div>
+										</div>*@
+										<i class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" ng-show="_tabspinner" style="top:630px !important;"></i>
+									</div>
+								</div>
+							</div>
+							<input id="hdntype" type="hidden" />
+							<input id="hdnstartdate" type="hidden" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		@Html.Partial("_Footer")
+		@Html.Partial("_DashboardModal")
+		
+
+		<div class="modal fade chartInfo" tabindex="-1" role="dialog" aria-labelledby="chartInfo" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+					<div class="modal-header clearfix" style="margin-top: 20px; padding-left: 50px;">
+						<h2 id="modalheader" class="pull-left"></h2>
+
+						<div class="pull-right dateRangeOption">
+							<div id="custmoption" class="customDateOption" style="display:none;">
+								<input id="txtstartdate" placeholder="From" type="text" class="form-control date-picker" readonly>
+								<input id="txtenddate" placeholder="To" type="text" class="form-control date-picker" readonly>
+								<button type="submit" class="btn btn-info" id="btncustmchart">Submit</button>
+							</div>
+							<select id="ddlspendchart" class="form-control selectDate pull-right" style="width: auto;">
+								<option value="7">7 Days</option>
+								<option value="30">30 Days</option>
+								<option value="90">90 Days</option>
+								<option value="0">Year to Date</option>
+								<option value="1">Custom</option>
+							</select>
+							<div id="divmsgerror" class="text-danger" style="width:380px;"></div>
+						</div>
+					</div>
+					<div class="modal-body">
+						<div id="modalChart" style="height: 530px;margin-bottom:15px;">
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<i id="chart-spinner" class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" style="display:none;"></i>
+		</div>
+		@* Trial Plan expiry alert *@
+		<!-- Modal -->
+		<div id="myModel" class="plan-overlay" style="display: none;padding:3px;">
+			<div class="popup-plan">
+				<h3 style="color:#0297d9;">Alert!!</h3>
+				<span id="alert" style="padding:5px;">
+					Your trial plan will be expired on @trialEnd.ToShortDateString().
+				</span>
+				<br />
+				<br />
+				<div style="display:inline-block;vertical-align:middle;" id="divYes">
+					<button class="btn btn-info btn-sm" onclick="location.href='@Url.Action("Plan","Settings")'">Sign Up</button>
+					<button id="Btnsub" class="btn btn-info btn-sm" style="display:none;margin-left:30px;">Remind Me Later</button>
+				</div>
+			</div>
+		</div>
+		<div id="myModel1" class="plan-overlay" style="display: none;">
+			<div class="popup-plan">
+				<span class="plan-lbl">
+					We are unable to find your stripe details. Please contact administrator.
+				</span>
+			</div>
+		</div>
+
+		<div id="loader1" class="loading_process" style="display: none;">
+			<div class="process-box">
+				<span class="process-lbl">
+					Your session will expire in less
+					than 2 minutes.<br />
+					Would you like to extend the session?
+				</span>
+				<br />
+				<div style="display:inline-block;vertical-align:middle;" id="divYes">
+					<button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+					<button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+				</div>
+			</div>
+		</div>
+		<div id="loader2" class="loading_process" style="display: none;">
+			<div class="sessionexpire-box">
+				<span class="process-lbl">
+					Session expired. You will be redirected
+					to home page
+				</span>
+				<br />
+				<div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+					 id="divsessionExpired">
+					<button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    @Scripts.Render("~/bundles/jqueryajax")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type='text/javascript' src="https://code.highcharts.com/highcharts.js"></script>
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular.min.js"></script>
+    <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css' type='text/css' media='all' />
+    <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js'></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type='text/css' media='all' />
+    @Scripts.Render("~/bundles/dashboard")
+    <script>
+        $(document).ready(function () {
+            //$('.popup-plan').css('height', $(window).height() * 0.25);
+            if (JSON.parse('@daysRemain') > 0 && JSON.parse('@daysRemain') <= 3 && localStorage.getItem("TrialExpPopUpShown") == 0 && JSON.parse('@plan') == 1 && ('@Session["StripeCardId"]' == null || '@Session["StripeCardId"]' == ''))
+            {
+                $('#myModel').show(); localStorage.setItem("TrialExpPopUpShown", 1);
+                $('#Btnsub').css('display', 'inline-block');
+                $('#Btnsub').on('click', function () {
+                    $('#myModel').hide();
+                })
+            } else if (JSON.parse('@daysRemain') <= 0 && JSON.parse('@plan') == 1) { /* when trail expired and no card */
+                $('#alert').text("Your trial period has expired, please sign up and add a payment method to continue using My PPC Pal."); $('#myModel').show();
+                $('#Btnsub').remove();
+                $('#divYes').css('text-align', 'center');
+                $('#divYes').css('margi', 'center');
+                disableClick('#myModel', '');
+            }
+            $('#hdnstartdate').val('@Session["StartDate"]');
+            _AjaxCampaignCharts();
+        })
+
+        var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        //$(function() {
+        //    $("table.tablesorter").tablesorter({ sortList: [[1, 1]] }); /* First index is for column, second one is for 0-asc, 1- desc */
+        //});
+
+        $(function () {
+            $(".date-picker").datepicker(); //jquery datepicker(Graphs)
+        });
+
+        /* Optimize charts code later*/
+        //Main Charts
+        function _AjaxCampaignCharts() {
+            var startDate = new Date();
+            var saleacos_StartDate = new Date();
+            var endDate = new Date();
+            //Start Date
+            startDate.setDate(startDate.getDate() - 16); //Set 14 days back from the end date
+            //End Date
+            endDate.setDate(endDate.getDate() - 3);
+            var _url = '@Url.Action("GetCharts", "Main")';
+            showGrpahSpinner();
+            $.ajax({
+                url: _url,
+                dataType: "json",
+                type: "POST",
+                data: JSON.stringify({ StartDate: getNewDate(startDate), EndDate: getNewDate(endDate) }),
+                contentType: 'application/json; charset=utf-8',
+                async: true,
+                cache: false,
+                success: function (data) {
+                    SpendResult(startDate, endDate, data.spendmodel, false);
+                    SaleResult(startDate, endDate, data.salemodel, false);
+                    AcosResult(startDate, endDate, data.acosmodel, false);
+                    hideGrpahSpinner();
+                },
+                error: function (xhr) {
+                    console.log(xhr.error)
+                    hideGrpahSpinner();
+                }
+            });
+        };
+
+        function showGrpahSpinner() {
+            $('#spend-spinner').show();
+            $('#sales-spinner').show();
+            $('#acos-spinner').show();
+        }
+
+        function hideGrpahSpinner() {
+            $('#spend-spinner').hide();
+            $('#sales-spinner').hide();
+            $('#acos-spinner').hide();
+        }
+
+        //Modal Charts
+        function GetModal(modalType) {
+            $('#hdntype').val(modalType);
+            $('#ddlspendchart').val('7');
+            ModalHighchart('', '', '', false);
+            GetModalChart();
+        }
+
+        function GetModalChart() {
+            var startDate = new Date();
+            var endDate = new Date();
+            Clear();
+            var selected = $('#ddlspendchart option:selected').val();
+            if (selected == 1) {
+                var sdate = $('#txtstartdate').val();
+                var edate = $('#txtenddate').val();
+                startDate = new Date(sdate);
+                endDate = new Date(edate);
+            } else if (selected == 0) {
+                //Start Date
+                startDate = new Date('@Session["StartDate"]');
+                startDate.setDate(startDate.getDate() - 59);
+                //End Date
+                endDate.setDate(endDate.getDate() - 3);
+                $('#custmoption').css('display', 'none');
+            } else {
+                //End Date
+                endDate.setDate(endDate.getDate() - 3);
+                //Start Date
+                startDate.setDate(startDate.getDate() - (parseInt(selected) + 2)); //Set 7/30 days back from the end date
+                $('#custmoption').css('display', 'none');
+            }
+
+            $('#chart-spinner').show();
+            setTimeout(function () {
+                _AjaxModalGraph(startDate, endDate);
+            }, 100);
+        }
+
+        function _AjaxModalGraph(StartDate, EndDate) {
+            var type = $('#hdntype').val();
+            var _url = '@Url.Action("GetModalChart", "Main")';
+            $.ajax({
+                url: _url,
+                dataType: "json",
+                type: "POST",
+                data: JSON.stringify({ StartDate: getNewDate(StartDate), EndDate: getNewDate(EndDate), Type: type }),
+                contentType: 'application/json; charset=utf-8',
+                async: true,
+                cache: false,
+                success: function (data) {
+                    var days = Math.round(Math.abs((EndDate.getTime() - StartDate.getTime()) / (24 * 60 * 60 * 1000)));
+                    var monthView = false;
+                    if (days > 60) {
+                        monthView = true;
+                    }
+
+                    if (monthView) {
+                        getSingleChart(StartDate, EndDate, data, type);
+                    } else {
+                        if (type == 'Spend') {
+                            SpendResult(StartDate, EndDate, data, true, type);
+                        } else if (type == 'Sales') {
+                            SaleResult(StartDate, EndDate, data, true, type);
+                        } else {
+                            AcosResult(StartDate, EndDate, data, true, type);
+                        }
+                    }
+                    $('#chart-spinner').hide();
+                },
+                error: function (xhr) {
+                    $('#chart-spinner').hide();
+                    console.log(xhr.error);
+                }
+            });
+        }
+
+        //On change
+        $('#ddlspendchart').change(function () {
+            var selected = $('#ddlspendchart option:selected').val();
+            if (selected == 1) {
+                $('#custmoption').css('display', 'block');
+            } else {
+                GetModalChart();
+            }
+        })
+
+        //Custom charts
+        $('#btncustmchart').click(function () {
+            var startdate = $('#txtstartdate').val();
+            var enddate = $('#txtenddate').val();
+            var _startDate = new Date(startdate);
+            var _endDate = new Date(enddate);
+            var datafrom = ConvertToDate(document.getElementById('hdnstartdate').value);
+            var _datefrom = new Date(datafrom);
+            _datefrom.setDate(_datefrom.getDate() - 59);
+
+            var eDate = new Date();
+            eDate.setDate(eDate.getDate() - 3);
+
+            var isValid = true;
+            Clear();
+            if (startdate == null || startdate == "") {
+                $('#divmsgerror').html("FromDate can't be empty!");
+                $('#txtstartdate').addClass('input-validation-error');
+                isValid = false;
+            } else if (enddate == null || enddate == "") {
+                $('#divmsgerror').html("ToDate can't be empty!");
+                $('#txtenddate').addClass('input-validation-error');
+                isValid = false;
+            } else if (_startDate < _datefrom) {
+                $('#divmsgerror').html("FromDate should not be less than " + _datefrom.toDateString());
+                $('#txtstartdate').addClass('input-validation-error');
+                isValid = false;
+            } else if (_endDate < _startDate) {
+                $('#divmsgerror').html("FromDate can't be more than ToDate!");
+                $('#txtstartdate').addClass('input-validation-error');
+                isValid = false;
+            } else if (eDate < _endDate) {
+                $('#divmsgerror').html("ToDate must be 3 days before to today!");
+                $('#txtenddate').addClass('input-validation-error');
+                isValid = false;
+            }
+            if (isValid == true) {
+                GetModalChart();
+            } else {
+                $('#divmsgerror').show();
+            }
+
+        })
+
+        //Spend Chart
+        function SpendResult(spend_Startday, spend_Endday, spendmodel, showmodal, type) {
+            var spend_Xseries = new Array();
+            var spend_Yseries = new Array();
+            var spend_Xserie, spend_Yserie;
+
+            while (spend_Startday <= spend_Endday) {
+                var spend = 0;
+                var setSpendX;
+                if (spendmodel.length > 0) {
+                    for (var i in spendmodel) {
+                        var reportDay = new Date(parseInt(spendmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(spend_Startday) == getNewDate(reportDay)) {
+                            spend = spendmodel[i].Spend;
+                            break;
+                        } else {
+                            spend = 0;
+                        }
+                    }
+                    setSpendX = monthNames[spend_Startday.getMonth()] + '\xa0' + spend_Startday.getDate();
+                    spend_Xserie = new Array(setSpendX);
+                    spend_Yserie = new Array(setSpendX, Math.round(spend * 100) / 100);
+                    spend_Xseries.push(spend_Xserie);
+                    spend_Yseries.push(spend_Yserie);
+                }
+                else {
+                    setSpendX = monthNames[spend_Startday.getMonth()] + '\xa0' + spend_Startday.getDate();
+                    spend_Xserie = new Array(setSpendX);
+                    spend_Yserie = new Array(setSpendX, spend);
+                    spend_Xseries.push(spend_Xserie);
+                    spend_Yseries.push(spend_Yserie);
+                }
+                spend_Startday = spend_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalHighchart(spend_Xseries, spend_Yseries, type, false)
+            else
+                SpendChart(spend_Xseries, spend_Yseries);
+        }
+
+        function SpendChart(Xspendserie, Yspendserie) {
+            var days = Xspendserie.length - 1.999;
+            // Spend chart
+            var container_modalchart = Highcharts.chart('spend', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Spend'
+                },
+                xAxis: {
+                    categories: Xspendserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Spend Amount($)',
+                    }
+                },
+                tooltip: {
+                    valuePrefix: '$'
+                },
+                series: [{
+                    name: 'Spend',
+                    data: Yspendserie
+                }]
+            });
+        }
+        // Sales Chart
+        function SaleResult(sale_Startday, sale_Endday, salemodel, showmodal, type) {
+            var sales_Xseries = new Array();
+            var sales_Yseries = new Array();
+            var sale_Xserie, sale_Yserie;
+
+            while (sale_Startday <= sale_Endday) {
+                var sale = 0;
+                var setSaleX;
+                if (salemodel.length > 0) {
+                    for (var i in salemodel) {
+                        var reportDay = new Date(parseInt(salemodel[i].ReportDay.substr(6)));
+                        if (getNewDate(sale_Startday) == getNewDate(reportDay)) {
+                            sale = salemodel[i].Sales;
+                            break;
+                        } else {
+                            sale = 0;
+                        }
+                    }
+                    setSaleX = monthNames[sale_Startday.getMonth()] + '\xa0' + sale_Startday.getDate();
+                    sale_Xserie = new Array(setSaleX);
+                    sale_Yserie = new Array(setSaleX, Math.round(sale * 100) / 100);
+                    sales_Xseries.push(sale_Xserie);
+                    sales_Yseries.push(sale_Yserie);
+                }
+                else {
+                    setSaleX = monthNames[sale_Startday.getMonth()] + '\xa0' + sale_Startday.getDate();
+                    sale_Xserie = new Array(setSaleX);
+                    sale_Yserie = new Array(setSaleX, sale);
+                    sales_Xseries.push(sale_Xserie);
+                    sales_Yseries.push(sale_Yserie);
+                }
+                sale_Startday = sale_Startday.addDays(1);
+            }
+
+            if (showmodal == true)
+                ModalHighchart(sales_Xseries, sales_Yseries, type, false);
+            else
+                SaleChart(sales_Xseries, sales_Yseries);
+        }
+        function SaleChart(Xsaleserie, Ysaleserie) {
+            var days = Xsaleserie.length - 1.999;
+            var container_modalchart = Highcharts.chart('sales', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Sales'
+                },
+
+                xAxis: {
+                    categories: Xsaleserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Sales Amount($)',
+                    }
+                },
+                tooltip: {
+                    valuePrefix: '$'
+                },
+                series: [{
+                    name: 'Sales',
+                    data: Ysaleserie
+                }]
+            });
+        }
+        //Acos Chart
+        function AcosResult(acos_Startday, acos_Endday, acosmodel, showmodal, type) {
+            var acos_Xseries = new Array();
+            var acos_Yseries = new Array();
+
+            var acosdate_New = new Date(acos_Endday);
+            var acos_Xserie, acos_Yserie;
+
+            while (acos_Startday <= acos_Endday) {
+                var acos = 0;
+                var setAcosX;
+                if (acosmodel.length > 0) {
+                    for (var i in acosmodel) {
+                        var reportDay = new Date(parseInt(acosmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(acos_Startday) == getNewDate(reportDay)) {
+                            acos = acosmodel[i].Sales==0 ? 0 : (acosmodel[i].Spend / acosmodel[i].Sales) * 100;
+                            break;
+                        } else {
+                            acos = 0;
+                        }
+                    }
+                    setAcosX = monthNames[acos_Startday.getMonth()] + '\xa0' + acos_Startday.getDate();
+                    acos_Xserie = new Array(setAcosX);
+                    acos_Yserie = new Array(setAcosX, Math.round(acos * 100) / 100);
+                    acos_Xseries.push(acos_Xserie);
+                    acos_Yseries.push(acos_Yserie);
+                }
+                else {
+                    setAcosX = monthNames[acos_Startday.getMonth()] + '\xa0' + acos_Startday.getDate();
+                    acos_Xserie = new Array(setAcosX);
+                    acos_Yserie = new Array(setAcosX, acos);
+                    acos_Xseries.push(acos_Xserie);
+                    acos_Yseries.push(acos_Yserie);
+                }
+                acos_Startday = acos_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalAcosHighchart(acos_Xseries, acos_Yseries, type)
+            else
+                AcosChart(acos_Xseries, acos_Yseries);
+        }
+
+        function AcosChart(Xacosserie, Yacosserie) {
+            var days = Xacosserie.length - 1.999;
+            var container_modalchart = Highcharts.chart('acos', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'ACoS'
+                },
+
+                xAxis: {
+                    categories: Xacosserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'ACoS(%)',
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                series: [{
+                    name: 'ACos',
+                    data: Yacosserie
+                }]
+            });
+        }
+
+        //Handle morethan 60 days
+        function getSingleChart(_Startday, _Endday, model, type) {
+            var start_Year = _Startday.getFullYear();
+            var end_Year = _Endday.getFullYear();
+            var strtmonth = _Startday.getMonth();
+            var endmonth = _Endday.getMonth();
+
+            var Xseries = new Array();
+            var Yseries = new Array();
+            var Xserie, Yserie;
+
+            for (; start_Year <= end_Year; start_Year++) {
+                if (start_Year < end_Year) {
+                    endmonth = 11;
+                } else {
+                    endmonth = _Endday.getMonth();
+                }
+                for (; strtmonth <= endmonth; strtmonth++) {
+                    var i = 0;
+                    var amount = 0;
+                    var sales = 0;
+                    var spend = 0;
+                    var len = model.length;
+                    if (len > 0) {
+                        for (; i < len; i++) {
+                            var reportDate = new Date(parseInt(model[i].ReportDay.substr(6)));
+                            if (reportDate.getFullYear() == start_Year && reportDate.getMonth() == strtmonth) {
+                                if (type == "Spend") {
+                                    amount += model[i].Spend;
+                                } else if (type == "Sales") {
+                                    amount += model[i].Sales;
+                                } else if (type == "Acos") {
+                                    spend += model[i].Spend;
+                                    sales += model[i].Sales;
+                                }
+                            }
+                        }
+                    }
+                    if (type == "Acos")
+                        amount = sales!=0 ? (spend/sales) *100 : 0;
+                    setX = monthNames[strtmonth];
+                    Xserie = new Array(setX);
+                    Yserie = new Array(setX, Math.round(amount*100)/100);
+                    Xseries.push(Xserie);
+                    Yseries.push(Yserie);
+                }
+                strtmonth = 0;
+            }
+            type == "Acos" ? ModalAcosHighchart(Xseries, Yseries, type, true) : ModalHighchart(Xseries, Yseries, type, true);
+        }
+
+        //Sales,Spend Chart shown in modal window
+        function ModalHighchart(Xserie, Yserie, Type, IsMonth) {
+            var days = IsMonth == true ? Xserie.length - 1 : Xserie.length - 1.999;
+            $('#modalheader').html(Type);
+            var container_modalchart = new Highcharts.chart('modalChart', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: Type
+                },
+
+                xAxis: {
+                    categories: Xserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: Type + "\xa0 Amount($)",
+                    }
+                },
+                tooltip: {
+                    valuePrefix: "$"
+                },
+                series: [{
+                    name: Type,
+                    data: Yserie
+                }]
+            });
+        }
+
+        //Acos Chart shown in modal window
+        function ModalAcosHighchart(Xserie, Yserie, Type, IsMonth) {
+            var chart;
+            var days = IsMonth == true ? Xserie.length - 1 : Xserie.length - 1.999;
+            $('#modalheader').html(Type);
+            var container_modalchart = new Highcharts.chart('modalChart', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: Type
+                },
+
+                xAxis: {
+                    categories: Xserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: "ACoS(%)",
+                    }
+                },
+                tooltip: {
+                    valueSuffix: "%"
+                },
+                series: [{
+                    name: Type,
+                    data: Yserie
+                }]
+            });
+        }
+
+        // Remove css
+        function Clear() {
+            $('#divmsgerror').html("");
+            $('#divmsgerror').hide();
+            $('#txtstartdate').removeClass('input-validation-error');
+            $('#txtenddate').removeClass('input-validation-error');
+        }
+    </script>
+</body>
+</html>

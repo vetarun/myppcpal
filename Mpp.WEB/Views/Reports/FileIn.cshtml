@@ -1,0 +1,156 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Reports.cshtml";
+    ViewBag._FileIn = "active";
+    ViewBag.Title = "FileIn";
+}
+<div class="dashboardTabs"  ng-controller="orgReportsController">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#KeyWordBulk" aria-controls="KeyWordBulk" role="tab" data-toggle="tab">Keyword Data</a></li>
+     
+        <li role="presentation"><a href="#SrchTermBulk" aria-controls="SrchTermBulk" role="tab" data-toggle="tab">Search Term Data</a></li>
+      
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane contentBox active" id="KeyWordBulk">
+            <table>
+                <thead>
+                    <tr>
+                      
+                        <th>File</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    @*<tr ng-show="pagedItems1.recordsTotal>0">
+                        <td colspan="8">
+                            <div class="pull-left">
+                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                <div style="padding-top:12px;">
+                                    <span>
+                                        Show
+                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        entries
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pagination pull-right">
+                                <ul>
+                                    <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                    </li>
+                                    <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                        ng-class="{active: n == pagedItems1.currentPage}"
+                                        ng-click="setPage()">
+                                        <a href="" ng-bind="n + 1">1</a>
+                                    </li>
+                                    <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage-1}">
+                                        <a href="" ng-click="nextPage()">Next »</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>*@
+                </tfoot>
+                <tbody>
+                    <tr ng-repeat="r in KeyWordBulkDates">
+                        <td>
+                            <div>Sponsored Products Bulk_{{r.Date}}</div>
+                        </td>
+                        
+                        <td>
+                            <div class="downloadFile" ng-click="DownLoadReport(r.Date,1)"><i class="fa fa-download"></i> Download</div>
+                        </td>
+                    </tr>
+                    @*<tr ng-show="showmsg">
+                        <td colspan="3">
+                            No Records found!
+                        </td>
+                    </tr>*@
+                </tbody>
+            </table>
+
+        </div>
+       
+        <div role="tabpanel" class="tab-pane contentBox" id="SrchTermBulk">
+            <table>
+                <thead>
+                    <tr>
+
+                        <th>Created Date</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    @*<tr ng-show="pagedItems1.recordsTotal>0">
+                        <td colspan="8">
+                            <div class="pull-left">
+                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                <div style="padding-top:12px;">
+                                    <span>
+                                        Show
+                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        entries
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pagination pull-right">
+                                <ul>
+                                    <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                    </li>
+                                    <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                        ng-class="{active: n == pagedItems1.currentPage}"
+                                        ng-click="setPage()">
+                                        <a href="" ng-bind="n + 1">1</a>
+                                    </li>
+                                    <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage-1}">
+                                        <a href="" ng-click="nextPage()">Next »</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>*@
+                </tfoot>
+                <tbody>
+                    <tr ng-repeat="r in SearchTermBulkDates">
+                        <td>
+                            <div>Search Term Bulk_{{r.Date}}</div>
+                        </td>
+                       
+                        <td>
+                            <div class="downloadFile" ng-click="DownLoadReport(r.Date,3)"><i class="fa fa-download"></i> Download</div>
+                        </td>
+                    </tr>
+                    @*<tr ng-show="showmsg">
+                        <td colspan="3">
+                            No Records found!
+                        </td>
+                    </tr>*@
+                </tbody>
+            </table>
+        </div>
+      
+
+        <i class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" ng-show="_tabspinner" style="top:630px !important;"></i>
+    </div>
+</div>
+
+<div class="miscInfo">
+    @*<p>Don’t understand these reports? <a href="javascript:;">Learn more about Reports <i class="fa fa-angle-right"></i></a></p>*@
+</div>
+

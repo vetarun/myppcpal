@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style>
+        .list-inline-item{
+            margin-top: 30px;
+            padding:35px !important;
+            font-size:larger;
+        }
+    </style>
+</head>
+<body>
+    <div> 
+        <div class="navbar-collapse collapse" style="text-align:center;">
+            <ul class="list-inline">
+                <li class="list-inline-item">@Html.ActionLink("Campaigns", "Campaigns", "Home")</li>
+                <li class="list-inline-item">@Html.ActionLink("AdGroups", "AdGroups", "Home")</li>
+                <li class="list-inline-item">@Html.ActionLink("Keywords", "Keywords", "Home", new { type = "1" }, null)</li>
+                <li class="list-inline-item">@Html.ActionLink("NegativeKeywords", "Keywords", "Home", new { type = "2" }, null)</li>
+                <li class="list-inline-item">@Html.ActionLink("Ads", "Ads", "Home")</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

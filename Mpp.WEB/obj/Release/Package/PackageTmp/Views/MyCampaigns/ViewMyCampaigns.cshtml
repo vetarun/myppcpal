@@ -1,0 +1,1037 @@
+﻿@{
+    Layout = null;
+    ViewBag._TopMenu2 = "active";
+
+}
+
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCampaigns | MyPPCPal</title>
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular.min.js"></script>
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular-messages.min.js"></script>
+    <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css' type='text/css' media='all' />
+    <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js'></script>
+   
+   
+    @Scripts.Render("~/bundles/mycampaigns")
+    @Styles.Render("~/Content/css")
+    <style>
+        .table {
+            margin-bottom: 1px !important;
+        }
+
+        .showdivmsg {
+            display: inline-block !important;
+        }
+
+        .error-container {
+            color: #e14b4b;
+        }
+
+        input.ng-dirty.ng-invalid {
+            border: 1px solid red;
+        }
+
+        input.submitted.ng-invalid {
+            border: 1px solid #f00;
+        }
+
+        .ActiveCamp {
+            background-color: silver;
+        }
+
+        .ActiveAction {
+            background-color: #0297d9;
+        }
+
+        .table.tblsorting > thead {
+            color: #337ab7;
+        }
+
+        .table.tblsorting .headerSort {
+            background-image: url(../Content/images/bg.png);
+            background-repeat: no-repeat;
+            background-position: right;
+            cursor: pointer;
+        }
+
+        .table.tblsorting .headerSortUp {
+            background-image: url(../Content/images/asc.png);
+        }
+
+        .table.tblsorting .headerSortDown {
+            background-image: url(../Content/images/desc.png);
+        }
+
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+
+        .msg-box1 {
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+            max-width: 450px;
+            line-height: 10px;
+            border-radius: 8px;
+            padding: 10px;
+            color: aliceblue;
+            position: fixed;
+            left: 47%;
+            top: 100px;
+            background: none repeat scroll 0 0 #a8bbc6;
+            font-size: 11px;
+            color: white;
+            margin: 0 0 0 -50px;
+            z-index: 9999;
+            font-size: 15px;
+        }
+
+        .filters {
+            padding: 10px 10px 0;
+            height: 60px;
+        }
+
+        .filterstable table {
+            width: 100%;
+        }
+
+        .filterstable {
+            padding: 0px 10px;
+            line-height: 40px;
+        }
+
+        #myProgress {
+            width: 100%;
+            background-color: #ddd;
+        }
+
+        #myBar {
+            width: 10%;
+            height: 30px;
+            background-color: #337ab7;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+
+        .main-flist {
+            border: 1px solid #eeeeee;
+            width: 50%;
+            float: left;
+        }
+
+        .main-slist {
+            width: 50%;
+            float: left;
+        }
+
+            .main-slist .divvideo {
+                text-align: center;
+                padding-top: 10px;
+            }
+
+        .selection-list {
+            border: 1px solid #eeeeee;
+        }
+
+            .selection-list .scroll-list {
+                padding: 0px !important;
+            }
+
+        select:hover, .btnSwitch label:hover {
+            cursor: pointer;
+        }
+        /*.popup-plan {
+            height: auto;
+            padding: 4px;
+            bottom: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+        }*/
+        .list_scrollable {
+            overflow: auto;
+        }
+
+        .mppcancel {
+            outline: none;
+            background-color: #538cbc;
+            border-radius: 50%;
+            width: 25px;
+            height: 23px;
+            float: left;
+            right: -12px;
+            margin-top: -20px;
+            position: absolute;
+            z-index: 9999;
+            border: none;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+            .mppcancel:hover {
+                background: #423d3d;
+            }
+    </style>
+</head>
+
+<body ng-app="myCampaigns" ng-controller="myCampaignsController" class="ng-cloak">
+    <div class="mainContainer">
+        @Html.Partial("_Header")
+
+        <div class="mainContent" style="padding-top:66px !important;">
+            <div class="mainWrap" style="padding: 0;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="campaignsBox" style="min-height: 700px;">
+                                    <div class="filters">
+                                        <label for="">Filter</label>
+                                        <select id="SelectedName" name="" ng-model="filterParams.SelectedName">
+                                            <option value="All">All</option>
+                                            <option value="Conservative">Conservative</option>
+                                            <option value="Recommended">Recommended</option>
+                                            <option value="Aggressive">Aggressive</option>
+                                            <option value="Custom">Custom</option>
+                                        </select>
+                                        <input type="text" placeholder="&#xF002; Search Campaigns" class="form-control" style="background-color:#fff;width:260px;margin-left:5px;display:inline-block;padding:8px 10px;" ng-model="filterParams.nameSearch">
+
+                                    </div>
+                                    <div class="campaignsList list_scrollable">
+                                        <table class="table tblsorting">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <div class="check" style="text-align:center;">
+                                                            <input id="chkselectall" type="checkbox" data-toggle="tooltip" title="Active/In-Active ALL" ng-click="Select()">
+                                                        </div>
+                                                    </th>
+                                                    <th ng-class="selectedCls('Name')" ng-click="sort_by('Name')">Campaigns</th>
+                                                    <th ng-class="selectedCls('Status')" ng-click="sort_by('Status')">Status</th>
+                                                    <th ng-class="selectedCls('FormulaName')" ng-click="sort_by('FormulaName')">Optimize</th>
+                                                    <th>
+                                                        <div>Actions</div>
+                                                    </th>
+                                                    <th>  <button type="button" ng-click="FetchNewKeys();" class="btn btn-default" style="height:36px;padding-top:8px;">Fetch New Campaigns</button></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="r in pagedItems[currentPage] | orderBy:sort.sortingOrder:sort.reverse" ng-class="r.RecordID == idSelectedCamp?'ActiveCamp':''">
+                                                    <td>
+                                                        <div class="btnSwitch">
+                                                            <label><input type="checkbox" id="check{{r.RecordID}}" ng-checked="r.Status" ng-click="runCampaign(r.RecordID, r.Status)"><span></span></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div id="row_{{r.RecordID}}">{{r.Name}}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="status" ng-if="r.Status == true">
+                                                            <span class="statusIcon green"></span>
+                                                        </div>
+                                                        <div class="status" ng-if="r.Status == false">
+                                                            <span class="statusIcon red"></span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="campaignsType">{{r.FormulaName}}</div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <div>
+                                                            <ul class="actionList" id="tab_nav" style="width:215px;">
+                                                                <li class="edit" ng-click="getFormula(r.RecordID, index1,r.IsBestSrchTerm)" ng-init="index1=1" ng-class="r.RecordID == idSelectedCamp && index1 == idSelectedaction?'ActiveAction':''">
+                                                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Edit" tooltip><i class="fa fa-pencil"></i></button>
+                                                                </li>
+                                                                <li class="copy" ng-click="copyFormula(r.RecordID, index2)" ng-init="index2=2" ng-class="r.RecordID == idSelectedCamp && index2 == idSelectedaction?'ActiveAction':''">
+                                                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Copy" tooltip><i class="fa fa-copy"></i></button>
+                                                                </li>
+                                                                <li class="paste" ng-click="pasteFormula(r.RecordID)">
+                                                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Paste" tooltip><img src="~/Content/images/paste-1.png" alt="P1" height="17"></button>
+                                                                </li>
+                                                                <li class="audit1" ng-click="getCampLog(r.RecordID)">
+                                                                    <button type="button" data-placement="top" data-target=".logDataInfo" title="Log 1" tooltip><i>L1</i></button>
+                                                                </li>
+                                                                <li class="audit2" ng-click="getKeyLog(r.RecordID)">
+                                                                    <button type="button" data-placement="top" data-target=".keylogDataInfo" title="Log 2" tooltip><i>L2</i></button>
+                                                                </li>
+                                                                <li class="paste" ng-click="pastAll()">
+                                                                    <button type="button" data-placement="top" data-toggle="tooltip" title="Paste ALL" tooltip><img src="~/Content/images/paste-a.png" alt="P2" height="17"></button>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-show="!pagedItems[currentPage].length">
+                                                    <td colspan="5">
+                                                        No Records found!
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <table>
+                                        <tfoot>
+                                            <tr ng-show="filteredItems.length>9">
+                                                <td colspan="8">
+                                                    <div class="pull-left" style="padding:15px;">
+                                                        <span>Showing {{Options1.start + 1}} to {{Options1.start + pagedItems[currentPage].length}} of {{filteredItems.length}} items</span>
+                                                        <div style="padding-top:12px;">
+                                                            <span>
+                                                                Show
+                                                                <select class="" style="width:auto;" ng-model="Options1.length" ng-change="GetCampDataBySize()">
+                                                                    <option value="10">10</option>
+                                                                    <option value="20">20</option>
+                                                                    <option value="50">50</option>
+                                                                    <option value="100">100</option>
+                                                                </select>
+                                                                entries
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pagination pull-right" style="padding-right:20px !important">
+                                                        <ul>
+                                                            <li ng-class="{disabled: currentPage == 0}">
+                                                                <a href="" ng-click="prevPage1()">« Prev</a>
+                                                            </li>
+
+                                                            <li ng-repeat="n in pagerange(pagedItems.length, currentPage, currentPage + gap) "
+                                                                ng-class="{active: n == currentPage}"
+                                                                ng-click="setPage1()">
+                                                                <a href="" ng-bind="n + 1">1</a>
+                                                            </li>
+
+                                                            <li ng-class="{disabled: (currentPage) == pagedItems.length - 1}">
+                                                                <a href="" ng-click="nextPage1()">Next »</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="campspinner" style="font-size:35px !important;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="campaignsForm customForm clearfix" style="min-height:700px;" @*ng-if="Formula.FormulaName == 'Custom'"*@>
+                                    <div class="select_C_Type clearfix" id="divformula" ng-show="myCampaigns.length>0">
+                                        <p style="font-size:15px;color:#92a4ac;">Please select one of 3 pre-set approach levels from the drop down below or select custom to create your own approach method</p>
+                                        <select name="" id="selectformula" ng-model="templatename" ng-change="ChangeFormula(templatename,formula)">
+                                            <option value="Recommended">Recommended</option>
+                                            <option value="Conservative">Conservative</option>
+                                            <option value="Aggressive">Aggressive</option>
+                                            <option value="Custom">Custom</option>
+                                        </select>
+                                    </div>
+                                    <form name="customForm" novalidate ng-submit="SaveFormula(Formula)">
+                                        <div ng-if="Formula.FormulaName == 'Custom'" style="padding-top:30px;">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Action</th>
+                                                        <th>Pause Keyword</th>
+                                                        <th>Lower Bid</th>
+                                                        <th>Raise Bid</th>
+                                                        <th>Negative Keywords</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>ACoS% cut off @*<button id="txtacosId" class="noteTip" type="button"><i class="fa fa-info"></i></button>*@</td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" id="txtacospause" name="acospause" class="form-control" grater-than="{{Formula.AcosLower}}" ng-model="Formula.AcosPause" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any individual keyword which reaches this ACoS% will be paused" tooltip autofocus>
+                                                                <span class="input-group-addon" data-toggle="tooltip" data-placement="top" tooltip>%</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="acoslower" class="form-control" grater-than="{{Formula.AcosRaise}}" ng-model="Formula.AcosLower" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="The bid will be lowered on any individual keyword which reaches this ACoS%" tooltip>
+                                                                <span class="input-group-addon">%</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="acosraise" class="form-control" lower-than="{{Formula.AcosLower}}" ng-model="Formula.AcosRaise" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="The bid will be raised on any individual keyword below this ACoS%" tooltip>
+                                                                <span class="input-group-addon">%</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="acosnegative" class="form-control" ng-model="Formula.AcosNegative" required numbers-Only ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any customer search term which reaches this ACoS% will be added to negative exact keyword match" tooltip>
+                                                                <span class="input-group-addon">%</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Spend without a sale @*<button class="noteTip"  type="button"><i class="fa fa-info"></i></button>*@</td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">$</span>
+                                                                <input type="text" name="spendpause" class="form-control" grater-than="{{Formula.SpendLower}}" ng-model="Formula.SpendPause" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any individual keyword which reaches this ad spend with no sales will be paused" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">$</span>
+                                                                <input type="text" name="spendlower" class="form-control" lower-than="{{Formula.SpendPause}}" ng-model="Formula.SpendLower" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="The bid will be lowered on any individual keyword which reaches this ad spend with no sales" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">$</span>
+                                                                <input type="text" name="spendnegative" class="form-control" ng-model="Formula.SpendNegative" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any customer search term which reaches this as spend without a sale will be added to negative exact keyword match" tooltip>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Clicks without a sale @*<button class="noteTip" type="button"><i class="fa fa-info"></i></button>*@</td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="clickspause" class="form-control" grater-than="{{Formula.ClicksLower}}" ng-model="Formula.ClicksPause" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any individual keyword which reaches this # of clicks with no sales will be paused" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="clickslower" class="form-control" lower-than="{{Formula.ClicksPause}}" ng-model="Formula.ClicksLower" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="The bid will be lowered on any individual keyword which reaches this # of clicks with no sales" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="clicksnegative" class="form-control" ng-model="Formula.ClicksNegative" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any customer search term which reaches this # of clicks without a sale will be added to negative exact keyword match" tooltip>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Impressions Per Click @*<button class="noteTip" type="button" data-toggle="tooltip" data-placement="top" title="Some important information" tooltip><i class="fa fa-info"></i></button>*@</td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="ctrpause" class="form-control" grater-than="{{Formula.CTRLower}}" ng-model="Formula.CTRPause" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any individual keyword which has more impressions per click than this amount with or without a sale will be paused" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="ctrlower" class="form-control" lower-than="{{Formula.CTRPause}}" ng-model="Formula.CTRLower" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="The bid will be lowered on any individual keyword which reaches this # of impressions per click with or without a sale" tooltip>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="ctrnegative" class="form-control" ng-model="Formula.CTRNegative" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any customer search term which has more impressions per click than this amount with or without a sale will be added to negative exact keyword match" tooltip>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Change Bid % @*<button class="noteTip" type="button" data-toggle="tooltip" data-placement="top" title="Some important information" tooltip><i class="fa fa-info"></i></button>*@</td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="bidlower" class="form-control" ng-model="Formula.BidLower" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any time a bid is lowered it will be lowered by this % down to the min bid" tooltip>
+                                                                <span class="input-group-addon">%</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="text" name="bidraise" class="form-control" ng-model="Formula.BidRaise" numbers-Only required ng-class="{submitted:submitted}" data-toggle="tooltip" data-placement="top" title="Any time a bid is raised it will be raised by this % up to the max bid" tooltip>
+                                                                <span class="input-group-addon">%</span>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <div class="row">
+                                                <div class="bidPrice clearfix">
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">Minimum Bid $</span>
+                                                                <input type="text" name="minbid" class="form-control" numbers-Only ng-model="Formula.MinBid" required ng-class="{submitted:submitted}" title="This is the lowest amount you will spend on any individual keyword bid" tooltip>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="row col-md-offset-0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">Maximum Bid $</span>
+                                                                <input type="text" name="maxbid" class="form-control" numbers-Only ng-model="Formula.MaxBid" required ng-class="{submitted:submitted}" title="This is the highest amount you will spend on any individual keyword bid" tooltip>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @* #108 changes *@
+
+                                                @*<div class="row">
+                                                    <div class="checkbox col-md-12"  " style="margin-top:-25px;">
+                                                        <label><input name="chkBestSearchCustom" ng-change="SetDefaultBstValues(Formula.IsBestSrchCheked)" ng-checked="DisableBestSrchTerm" ng-model="Formula.IsBestSrchCheked" ng-disabled="DisableBestSrchTerm"  type="checkbox">Pull Best Customer Search Terms To New Campaign.</label>
+                                                    </div>
+                                                    <div ng-show="Formula.IsBestSrchCheked || DisableBestSrchTerm" style="margin-left:40px;">
+                                                        <p style="width:600px;">Any Customer Search Term which meets both of these conditions and has at least one sale will be added to a new campaign to be bid on.</p><br />
+                                                        <div class="col-md-4" >
+                                                            <div class="row">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">ACoS% cut off</span>
+                                                                    <input type="text" name="BestSearchACos"  class="form-control" numbers-Only ng-model="Formula.BestSearchACos" ng-required="chkBestSearch">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="row col-md-offset-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">Impressions</span>
+                                                                    <input type="text" name="BestSearchImpressons" class="form-control" numbers-Only ng-model="Formula.BestSearchImpressons" ng-required="chkBestSearch">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+                                                <div class="FButtons" style="margin-top:15px;">
+                                                    <button type="submit" id="btnApply" class="btnApply btn-info">Apply</button>
+                                                    <button type="submit" class="btnSubmit" style="display: none">Update</button>
+                                                    <button type="button" id="btncancel" class="btncancel" ng-click="Cancel()">Cancel</button>
+                                                    <div class="errormsg" style="color:red;display:none;">{{message}}</div>
+                                                </div>
+                                            </div>
+
+                                           
+                                        </div>
+                                        <div ng-if="Formula.FormulaName == 'Recommended' || Formula.FormulaName == 'Conservative' || Formula.FormulaName == 'Aggressive'">
+                                            <div class="campaignsForm clearfix recomendedCampaign" style="display: block">
+                                                <div class="messageStyle">
+                                                    <p><i class="fa fa-2x fa-thumbs-o-up"></i></p>
+                                                    <h5>{{Formula.FormulaName}}</h5>
+                                                    <p ng-if="Formula.FormulaName == 'Recommended'">Will spend enough to keep most competitors away, but won't be as aggressive as the top spenders. Our most proven method to keep products ranked and get a solid return on your investment in PPC. Works for most niches.</p>
+                                                    <p ng-if="Formula.FormulaName == 'Conservative'">Used for those who don't want to spend too much money on PPC, or those in less competitive niches, or want to keep an already top seller moving.</p>
+                                                    <p ng-if="Formula.FormulaName == 'Aggressive'">Recommended for new products to get them moving, super competitive niches, or those who want to out advertise competitors at all costs.</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                @*<div class="checkbox col-md-12">
+                                                    <label><input name="chkBestSearch" ng-checked="DisableBestSrchTerm" ng-disabled="DisableBestSrchTerm" ng-model="Formula.IsBestSrchCheked" type="checkbox">Pull Best Customer Search Terms To New Campaign</label>
+                                                </div>*@
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="bidPrice clearfix">
+                                                        <div class="col-md-6">
+                                                            <div class="row">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">Minimum Bid $</span>
+                                                                    <input type="text" name="minbid" class="form-control" ng-model="Formula.MinBid" ng-minlength="1" numbers-Only required ng-class="{submitted:submitted}" title="This is the lowest amount you will spend on any individual keyword bid" tooltip>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="row col-md-offset-0">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">Maximum Bid $</span>
+                                                                    <input type="text" name="maxbid" class="form-control" ng-model="Formula.MaxBid" ng-minlength="1" numbers-Only required ng-class="{submitted:submitted}" title="This is the highest amount you will spend on any individual keyword bid" tooltip>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="FButtons">
+                                                        <button type="submit" id="btnApply" class="btnApply btn-info">Apply</button>
+                                                        <button type="submit" class="btnSubmit" style="display: none">Update</button>
+                                                        <button type="button" id="btncancel" class="btncancel" ng-click="Cancel()">Cancel</button>
+                                                        <div class="errormsg" style="color:red;display:none;">{{message}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_Footer")
+
+        <div class="modal fade logDataInfo" tabindex="-1" role="dialog" aria-labelledby="logDataInfo" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="modal-header">
+                        <center>
+                            <h4>Campaign Log</h4>
+                            <span>Campaign Name: {{CampLogName}}</span>
+                        </center>
+                    </div>
+                    <div class="modal-body">
+                        <div class="scroll-list">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th data-sortable="true">Modified On</th>
+                                        <th data-sortable="true">Time</th>
+                                        <th data-sortable="true">Modified Field</th>
+                                        <th data-sortable="true">Old Value</th>
+                                        <th data-sortable="true">New Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="r in pagedItems1.records">
+                                        <td>{{r.ModifiedOn}}</td>
+                                        <td>{{r.Time}}</td>
+                                        <td>{{r.ModifiedField}}</td>
+                                        <td>{{r.OldValue}}</td>
+                                        <td>{{r.NewValue}}</td>
+                                    </tr>
+                                    <tr ng-show="!pagedItems1.records.length">
+                                        <td colspan="5">
+                                            No Records found!
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <table class="table">
+                            <tfoot>
+                                <tr ng-show="pagedItems1.recordsTotal>0">
+                                    <td colspan="8">
+                                        <div class="pull-left">
+                                            <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                            <div style="padding-top:12px;">
+                                                <span>
+                                                    Show
+                                                    <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                        <option value="10">10</option>
+                                                        <option value="20">20</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                    entries
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="pagination pull-right">
+                                            <ul>
+                                                <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                                    <a href="" ng-click="prevPage()">« Prev</a>
+                                                </li>
+                                                <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                                    ng-class="{active: n == pagedItems1.currentPage}"
+                                                    ng-click="setPage()">
+                                                    <a href="" ng-bind="n + 1">1</a>
+                                                </li>
+                                                <li ng-class="{disabled: (pagedItems1.currentPage) == (pagedItems1.lastpage - 1)}">
+                                                    <a href="" ng-click="nextPage()">Next »</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade RevertedDataInfo" tabindex="-1" role="dialog" aria-labelledby="RevertedDataInfo" data-backdrop="static" data-keyboard="false" style=" z-index:11000;">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content" style="height:auto; text-align:center;">
+                    <button type="button" class="close" data-dismiss="modal" ng-click="modalspinner1=false" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="modal-header" style="padding:5px;">
+                        <center>
+                            <h3>Warning!!</h3>
+                        </center>
+                    </div>
+                    <div class="modal-body">
+
+                        <p class="plan-lbl">Any keyword which has been un-paused manually will not be automated for the next 30 days.</p>
+
+                    </div>
+                    <div class="modal-footer" style="padding-bottom:20px;">
+                        <p>
+                            <button type="button" class="btnApply btn-info" style="margin-right: 10px;" ng-click="RevertChangesConfirmed(KID1,CID1,AID1,RepID1,RID1,ModifiedDate)">Confirm</button>
+                            <button type="button" ng-click="modalspinner1=false" class="btnApply btn-info" data-dismiss="modal">Close</button>
+                        </p>
+                        <div class="checkbox">
+                            <label><input name="cb" id="cb" type="checkbox"> Do not show this warning again</label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="modal fade keylogDataInfo" tabindex="-1" role="dialog" aria-labelledby="logDataInfo" data-backdrop="static" data-keyboard="false" style="z-index:10000;">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="modal-header">
+                        <center>
+                            <h4>Keyword Log</h4>
+                            <span>Campaign: {{CampLogName}}</span>
+                        </center>
+                    </div>
+                    <div class="modal-body">
+                        <div class="scroll-list">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th data-sortable="true">Modified On</th>
+                                        <th data-sortable="true">Keyword</th>
+                                        <th data-sortable="true">Ad Group</th>
+                                        <th data-sortable="true">Modified Field</th>
+                                        <th data-sortable="true">Old Value</th>
+                                        <th data-sortable="true">New Value</th>
+                                        <th data-sortable="true">Match Type </th>
+                                        <th data-sortable="true">Reason</th>
+
+                                        <th data-sortable="true">Revert Change</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="r in pagedItems1.records">
+                                        <td>{{r.ModifiedOn}}</td>
+                                        <td>{{r.KeywordName}}</td>
+                                        <td>{{r.AdGroupName}}</td>
+                                        <td>{{r.ModifiedField}}</td>
+                                        <td>{{r.OldValue}}</td>
+                                        <td>{{r.NewValue}}</td>
+                                        <td>{{r.MatchType}}</td>
+                                        <td>{{r.Reason}}</td>
+
+                                        <td>
+                                            <div ng-show="r.RevertStatus==0"><button type="button" ng-click=" RevertChanges(r.KeywordID,r.CampID,r.AdGroupID,r.ReportID,r.ReasonID,r.ModifiedOn1)" class="fa fa-undo"></button></div>
+
+                                            <div ng-show="r.RevertStatus==1">  <button type="button" class="fa fa-ban"></button></div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="!pagedItems1.records.length">
+                                        <td colspan="9">
+                                            No Records found!
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <table class="table">
+                            <tfoot>
+                                <tr ng-show="pagedItems1.recordsTotal>0">
+                                    <td colspan="8">
+                                        <div class="pull-left">
+                                            <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                            <div style="padding-top:12px;">
+                                                <span>
+                                                    Show
+                                                    <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                        <option value="10">10</option>
+                                                        <option value="20">20</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                    entries
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="pagination pull-right">
+                                            <ul>
+                                                <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                                    <a href="" ng-click="prevPage()">« Prev</a>
+                                                </li>
+                                                <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                                    ng-class="{active: n == pagedItems1.currentPage}"
+                                                    ng-click="setPage()">
+                                                    <a href="" ng-bind="n + 1">1</a>
+                                                </li>
+                                                <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage-1}">
+                                                    <a href="" ng-click="nextPage()">Next »</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade campSelectionDataInfo" tabindex="-1" role="dialog" aria-labelledby="campSelectionDataInfo" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" role="document" style="width:600px;">
+                <div class="modal-content">
+                    <button type="button" class="close" ng-click="CloseModel()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="idOptimizeModal">Campaigns Optimization</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="selection-list">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding:10px;">
+                                            <span>Toggle ON/OFF</span>
+                                        </td>
+                                        <td style="padding:10px;">
+                                            <input type="checkbox" ng-model="activeall">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="campaignsList scroll-list">
+                                <table class="table table-striped" style="margin-bottom:0px!important">
+                                    <tbody>
+                                        <tr ng-repeat="r in myCampaigns">
+                                            <td>
+                                                <div>{{r.Name}}</div>
+                                            </td>
+                                            <td>
+                                                <div class="btnSwitch">
+                                                    <label><input type="checkbox" id="check_{{r.RecordID}}" ng-checked="activeall"><span></span></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="!myCampaigns.length">
+                                            <td colspan="2">
+                                                No Records found!
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="actionButton" style="clear:both;">
+                            <button class="btn btn-lg btn-block btn-info" ng-click="checkAllCamps()">Update</button>
+                            <div class="modalerror" style="color:red;display:none;">{{modalmessage}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divAcceptPopup" class="plan-overlay" style="display:none;">
+            <div class="popup-plan">
+                <span class="plan-lbl">Please Activate one or more campaigns on the following screen to start using <span style="color:steelblue;">My PPC Pal</span>. No modifications will be made to your seller central account until the campaign is activated.</span>
+                <br />
+                <div style="display: inline-block; vertical-align: middle;" class="" id="divYes">
+                    <button type="submit" onclick="ReturnToCamp();" class="btn btn-block btn-info">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="divFetchNewCampaignPopup" class="plan-overlay" style="display:none;">
+            <div class="popup-plan">
+                <span class="plan-lbl" id="NewCampaignRespo"></span>
+                <br />
+                <div style="display: inline-block; vertical-align: middle;" class="" id="divYes">
+                    <button type="submit" onclick="ReturnToCamp();" class="btn btn-block btn-info">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="divSuccessPopup" class="plan-overlay" style="display:none;">
+            <div class="popup-plan">
+                <span class="plan-lbl">
+                    Thank you. Your activated campaigns will be optimized at the next scheduled optimization time. You may edit any or all your campaigns now or any time in the future!
+                </span>
+                <br />
+                <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                    <button type="button" onclick="ReturnToCamp();" class="btn btn-block btn-info">GO</button>
+                </div>
+            </div>
+        </div>
+
+        @*Loading*@
+        <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="modalspinner" style="z-index:9999 !important;"></i>
+        <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="modalspinner1" style="z-index:12000 !important;"></i>
+        <div class="Loadimg" style="color:#a94442;display:none;" id="divProgress">
+            <div class="Loadimg1">
+                <div class="loader"></div>
+            </div>
+        </div>
+        <div class="progressbar">
+            <div>
+                Please wait!
+            </div>
+            <div id="myProgress">
+                <div id="myBar">0%</div>
+            </div>
+        </div>
+
+        @*Display results*@
+        <div class="msg-box" style="display:none">
+            <span id="divresponse"></span>
+        </div>
+        <div id="divMsg" class="msg-box1">
+            <button id="formulacancel" type="button" class="mppcancel" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            @*<img class="imgcancel" src="~/Content/images/no-success.png" alt="nosuccess" />*@
+            <div class="error-container">
+                <div ng-messages="customForm.acospause.$error" ng-show="customForm.acospause.$invalid && (customForm.acospause.$dirty||submitted)&& hideCustomFormula == false">
+                    <p ng-message="required">AcosPause is required</p>
+                    <p ng-message="graterThan">AcosPause must be grater than AcosLower</p>
+                </div>
+                <div ng-messages="customForm.acoslower.$error" ng-show="customForm.acoslower.$invalid && (customForm.acoslower.$dirty||submitted)&& hideCustomFormula == false">
+                    <p ng-message="required">AcosLower is required</p>
+                    <p ng-message="graterThan">AcosLower must be grater than AcosRaise</p>
+                </div>
+                <div ng-messages="customForm.acosraise.$error" ng-show="customForm.acosraise.$invalid && (customForm.acosraise.$dirty||submitted)&& hideCustomFormula == false">
+                    <p ng-message="required">AcosRaise is required</p>
+                    <p ng-message="lowerThan">AcosRaise must be lower than AcosLower</p>
+                </div>
+                <div ng-messages="customForm.acosnegative.$error" ng-show="customForm.acosnegative.$invalid && (customForm.acosnegative.$dirty||submitted)">
+                    <p ng-message="required">AcosNegative is required</p>
+                </div>
+                <div ng-messages="customForm.spendpause.$error" ng-show="customForm.spendpause.$invalid && (customForm.spendpause.$dirty||submitted)&& hideCustomFormula == false">
+                    <p ng-message="required">SpendPause is required</p>
+                    <p ng-message="graterThan">SpendPause must be grater than SpendLower</p>
+                </div>
+                <div ng-messages="customForm.spendlower.$error" ng-show="customForm.spendlower.$invalid && (customForm.spendlower.$dirty||submitted)&& hideCustomFormula == false">
+                    <p ng-message="required">SpendLower is required</p>
+                    <p ng-message="lowerThan">SpendLower must be lower than SpendPause</p>
+                </div>
+                <div ng-messages="customForm.spendnegative.$error" ng-show="customForm.spendnegative.$invalid && (customForm.spendnegative.$dirty||submitted)">
+                    <p ng-message="required">SpendNegative is required</p>
+                </div>
+                <div ng-messages="customForm.clickspause.$error" ng-show="customForm.clickspause.$invalid && (customForm.clickspause.$dirty||submitted)">
+                    <p ng-message="required">ClicksPause is required</p>
+                    <p ng-message="graterThan">ClicksPause must be grater than ClicksLower</p>
+                </div>
+                <div ng-messages="customForm.clickslower.$error" ng-show="customForm.clickslower.$invalid && (customForm.clickslower.$dirty||submitted)">
+                    <p ng-message="required">ClicksLower is required</p>
+                    <p ng-message="lowerThan">ClicksLower must be lower than ClicksPause</p>
+                </div>
+                <div ng-messages="customForm.clicksnegative.$error" ng-show="customForm.clicksnegative.$invalid && (customForm.clicksnegative.$dirty||submitted)">
+                    <p ng-message="required">ClicksNegative is required</p>
+                </div>
+                <div ng-messages="customForm.ctrpause.$error" ng-show="customForm.ctrpause.$invalid && (customForm.ctrpause.$dirty||submitted)">
+                    <p ng-message="required">CTRPause is required</p>
+                    <p ng-message="graterThan">CTRPause must be grater than CTRLower</p>
+                </div>
+                <div ng-messages="customForm.ctrlower.$error" ng-show="customForm.ctrlower.$invalid && (customForm.ctrlower.$dirty||submitted)">
+                    <p ng-message="required">CTRLower is required</p>
+                    <p ng-message="lowerThan">CTRLower must be lower than CTRPause</p>
+                </div>
+                <div ng-messages="customForm.ctrnegative.$error" ng-show="customForm.ctrnegative.$invalid && (customForm.ctrnegative.$dirty||submitted)">
+                    <p ng-message="required">CTRNegative is required</p>
+                </div>
+                <div ng-messages="customForm.bidlower.$error" ng-show="customForm.bidlower.$invalid && (customForm.bidlower.$dirty||submitted)">
+                    <p ng-message="required">LowerBid is required</p>
+                </div>
+                <div ng-messages="customForm.bidraise.$error" ng-show="customForm.bidraise.$invalid && (customForm.bidraise.$dirty||submitted)">
+                    <p ng-message="required">RaiseBid is required</p>
+                </div>
+                <div ng-messages="customForm.minbid.$error" ng-show="customForm.minbid.$invalid && (customForm.minbid.touched||submitted)">
+                    <p ng-message="required">Minimum Bid is required</p>
+                </div>
+                <div ng-messages="customForm.maxbid.$error" ng-show="customForm.maxbid.$invalid && (customForm.maxbid.touched||submitted)">
+                    <p ng-message="required">Maximum Bid is required</p>
+                </div>
+                <div ng-messages="customForm.BestSearchACos.$error" ng-show="customForm.BestSearchACos.$invalid && (customForm.BestSearchACos.touched||submitted) && Formula.IsBestSrchCheked">
+                    <p ng-message="required">Minimum Bid is required</p>
+                </div>
+                <div ng-messages="customForm.BestSearchImpressons.$error" ng-show="customForm.BestSearchImpressons.$invalid && (customForm.BestSearchImpressons.touched||submitted) && Formula.IsBestSrchCheked">
+                    <p ng-message="required">Maximum Bid is required</p>
+                </div>
+
+            </div>
+            <div id="changesWarning" class="Revret" style="display:none;">
+
+            </div>
+        </div>
+        @*Auto Logout*@
+        <div id="loader1" class="loading_process" style="display: none;">
+            <div class="process-box">
+                <span class="process-lbl">
+                    Your session will expire in less
+                    than 2 minutes.<br />
+                    Would you like to extend the session?
+                </span>
+                <br />
+                <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                    <button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+                    <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+                </div>
+            </div>
+        </div>
+        <div id="loader2" class="loading_process" style="display: none;">
+            <div class="sessionexpire-box">
+                <span class="process-lbl">
+                    Session expired. You will be redirected
+                    to home page
+                </span>
+                <br />
+                <div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+                     id="divsessionExpired">
+                    <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+        //$(document).ready(function () {
+        //    $('.popup-plan').css('height', $(window).height() * 0.25);
+        //})
+        //function keyPress_ValidateEmpty(input) {
+
+        //    var elem = $(input);
+        //    var strString = elem.val();
+        //    var strValidChars = "0123456789";
+        //    var strChar;
+        //    for (i = 0; i < strString.length; i++) {
+        //        strChar = strString.charAt(i);
+        //        if (strValidChars.indexOf(strChar) == -1) {
+        //            elem.val(text.value.substring(0, i));
+        //        }
+        //    }
+        //    if (elem.val() != '') {
+        //        elem.removeClass('ng-invalid ng-invalid-required');
+        //        elem.addClass('ng-valid-parse ng-valid ng-valid-required');
+        //    }
+        //    else {
+
+        //        elem.removeClass('ng-valid-parse ng-valid ng-valid-required');
+        //        elem.addClass('ng-invalid ng-invalid-required');
+        //    }
+        //}
+        $('#formulacancel').on('click', function () {
+            $('.msg-box1').css('display', 'none');
+            //$(':input').css("border", '1px solid #cccccc');
+        });
+        //$('.campaignsList').on({
+        //    'mouseenter': function () {
+        //        $(this).addClass('list_scrollable');
+        //    },
+        //    'mouseleave': function () {
+        //        $(this).removeClass('list_scrollable');
+        //    }
+        //});
+        function ReturnToCamp() {
+            $('.plan-overlay').css('display', 'none');
+        }
+
+        function ReturnToHome() {
+            window.location.href = "http://localhost:38380/MyCampaigns/ViewMyCampaigns";
+        }
+
+    </script>
+</body>
+</html>
+

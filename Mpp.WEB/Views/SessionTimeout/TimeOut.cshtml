@@ -1,0 +1,50 @@
+﻿@model Mpp.WEB.Models.LoginViewModel
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+
+</head>
+<body class="darkBg">
+    <div class="mainContainer">
+        <header class="mainHeader clearfix">
+            <div class="logo pull-left">
+                <a href="#"><img src="~/Content/images/logo.png" alt=""></a>
+            </div>
+        </header>
+        <div class="mainContent">
+            <div class="container">
+                <div class="col-md-4 col-md-push-4">
+                    <div class="md-box" style="margin-top:150px;">
+                        <h4 style="color:indianred;">Session Timeout</h4>
+
+                        Your session has expired.
+
+                        Please <a href="@Url.Action("Login", "Account", new { area="Admin"})">click here</a> to login.
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <footer class="mainFooter clearfix">
+            <div class="logoFooter pull-left"><a href=""><img src="~/Content/images/logo-footer.jpg" alt=""></a></div>
+            <nav class="footerNav pull-right">
+                <ul class="list-unstyled">
+                    <li>Copyright © @DateTime.Now.Year, MyPPCPal</li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </div>
+</body>
+</html>

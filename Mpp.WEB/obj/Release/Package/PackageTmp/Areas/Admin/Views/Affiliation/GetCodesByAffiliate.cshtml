@@ -1,0 +1,283 @@
+﻿
+@{
+    ViewBag.Title = "GetCodesByAffiliate";
+    Layout = "~/Areas/Admin/Views/Shared/_AffiliateLayout.cshtml";
+   
+}
+
+<style>
+    input.ng-dirty.ng-invalid {
+        border: 1px solid red;
+    }
+
+    input.submitted.ng-invalid {
+        border: 1px solid #f00;
+    }
+
+    .modal-body {
+        padding: 0 30px !important;
+    }
+
+    label {
+        float: left;
+        color: #999 !important;
+        width: 160px;
+    }
+
+    .input-group {
+        width: 200px !important;
+    }
+
+        .input-group input[type=text], input[type=number] {
+            height: 35px;
+            border-radius: 6px !important;
+        }
+
+    .commonLayout.btn {
+        padding: 10px 30px !important;
+    }
+
+    .modal-footer {
+        padding: 20px 30px 40px;
+    }
+</style>
+<div ng-controller="affiliationCtrl">
+    <div class="commonLayout">
+        <div class="DCFilters clearfix">
+            <input type="text" placeholder="&#xF002; Search Coupons" class="form-control" ng-model="filterParams.nameSearch" ng-blur="filter_by()" style="height:40px;background:none;font-family:Arial, FontAwesome">
+            <button class="pull-right btn btn-success" data-toggle="modal" data-target="#addAffiliate" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> Add New</button>
+        </div>
+        <div class="CLBody">
+            <table class="table tblsorting">
+                <thead>
+                    <tr>
+                        <th ng-class="selectedCls('Code')" ng-click="sort_by('Code')">Coupon Code</th>
+                        <th ng-class="selectedCls('Percent')" ng-click="sort_by('Percent')">Percent Off</th>
+                        <th ng-class="selectedCls('Amount')" ng-click="sort_by('Amount')">Amount Off</th>
+                        <th ng-class="selectedCls('Duration')" ng-click="sort_by('Duration')">Duration</th>
+                        <th ng-class="selectedCls('Max')" ng-click="sort_by('Max')">Redeem (Used/Max)</th>
+                        <th ng-class="selectedCls('Redeemby')" ng-click="sort_by('Redeemby')">RedeemBy</th>
+                        <th ng-class="selectedCls('Sales')" ng-click="sort_by('Sales')">Sales</th>
+                        <th ng-class="selectedCls('Subscribers')" ng-click="sort_by('Subscribers')">Subscribers</th>
+                        <th ng-class="selectedCls('PreDiscountSale')" ng-click="sort_by('PreDiscountSale')">Pre-Discount Sales</th>
+                        <th ng-class="selectedCls('AffiliateCommission')" ng-click="sort_by('AffiliateCommission')">Commission</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr ng-show="pagedItems1.recordsTotal>5">
+                        <td colspan="9">
+                            <div class="pull-left">
+                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                <div style="padding-top:12px;text-align:left;">
+                                    <span>
+                                        Show
+                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                        entries
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pagination pull-right">
+                                <ul>
+                                    <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                    </li>
+                                    <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                        ng-class="{active: n == pagedItems1.currentPage}"
+                                        ng-click="setPage()">
+                                        <a href="" ng-bind="n + 1">1</a>
+                                    </li>
+                                    <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+                                        <a href="" ng-click="nextPage()">Next »</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr ng-repeat="r in pagedItems1.records">
+                        <td>{{r.Code}}</td>
+                        <td>{{r.Percent |removezero}}</td>
+                        <td>{{r.Amount |removezero}}</td>
+                        <td ng-if="r.Duration == 0">Once</td>
+                        <td ng-if="r.Duration == 1">Forever</td>
+                        <td>{{r.RedeemedCount}}/{{r.Max |removezero}}</td>
+                        <td>{{r.Redeemby|date}}</td>
+                        <td>{{r.Sales}}</td>
+                        <td>{{r.Subscribers}}</td>
+                        <td>{{r.PreDiscountSale}}</td>
+                        <td>{{r.AffiliateCommission}}</td>
+                        <td>
+                            <div>
+                                <ul class="actionList" id="tab_nav">
+                                    <li>
+                                        <button data-toggle="modal" data-target=".salesDataInfo" data-backdrop="static" data-keyboard="false" title="View" ng-click="GetSalesModel(r.ID, r.Code)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                                    </li>
+                                    @*<li>
+                        <button title="Delete" ng-click="DeleteCode(r.Code)"><i class="fa fa-trash"></i></button>
+                    </li>*@
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr ng-show="showmsg">
+                        <td colspan="9">
+                            No Records found!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addAdmin" id="addAffiliate">
+        <div class="modal-dialog " role="document" style="width:470px;">
+            <div class="modal-content" style="height:550px !important;">
+                <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="modal-header clearfix" style="margin-top: 20px; padding-left: 30px;">
+                    <h2 class="modal-title">Create new Coupon</h2>
+                </div>
+                <form novalidate name="fmcode" ng-submit="AddUpdateCode(Affiliation)">
+                    <div class="modal-body">
+                        <div>
+                            <label class="" style="border:none !important">Payoff Type:</label>
+                            <div class="input-group">
+                                <label class="radio-inline" style="width:75px;">
+                                    <input type="radio" name="payradio" ng-model="PayoffType" ng-value="0">Amount
+                                </label>
+                                <label class="radio-inline" style="width:85px;">
+                                    <input type="radio" name="payradio" ng-model="PayoffType" ng-value="1">Percentile
+                                </label>
+                            </div>
+                        </div>
+                        <div ng-if="PayoffType==0">
+                            <label class="" style="border:none !important">Amount ($):</label>
+                            <div class="input-group">
+                                <input type="number" name="txtamount" allow-Only-Numbers min="{{min}}" ng-model="Affiliation.Amount" ng-class="{submitted:submitted}" class="form-control" required>
+                                <div ng-messages="fmcode.txtamount.$error" style="color: #ff0000" role="alert" ng-if="fmcode.txtamount.$dirty || submitted">
+                                    <div ng-message="required">This field is required.</div>
+                                    <div ng-message="min">Must be at least {{min}}.</div>
+                                    <div ng-message="number">Not a valid number.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="PayoffType==1">
+                            <label class="" style="border:none !important">Percent off (%):</label>
+                            <div class="input-group">
+                                <input type="text" name="txtpercent" allow-Only-Numbers ng-min="{{min}}" ng-max="{{max}}" ng-model="Affiliation.Percent" ng-class="{submitted:submitted}" class="form-control" numbers-only required>
+                                <div ng-messages="fmcode.txtpercent.$error" style="color: #ff0000" role="alert" ng-if="fmcode.txtpercent.$dirty || submitted">
+                                    <div ng-message="belowminimum">Must be between {{min}} and {{max}}.</div>
+                                    <div ng-message="abovemaximum">Must be between {{min}} and {{max}}.</div>
+                                    <div ng-message="nonnumeric">Enter an integer.</div>
+                                    <div ng-message="required">This field is required.</div> @*It should be last since the value is always empty*@
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="" style="border:none !important">Affiliate Code:</label>
+                            <div class="input-group">
+                                <input type="text" name="txtcode" ng-model="Affiliation.Code" ng-class="{submitted:submitted}" class="form-control" required>
+                                <span class="error" ng-show="(fmcode.txtcode.$dirty || submitted) && fmcode.txtcode.$error.required">This field is required</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="" style="border:none !important">Duration:</label>
+                            <div class="input-group">
+                                <select ng-model="Affiliation.Duration">
+                                    <option value="0">Once</option>
+                                    <option value="1">Forever</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="" style="border:none !important">Max redemptions:</label>
+                            <div class="input-group">
+                                <input type="text" name="txtmaxredeem" ng-min="{{min}}" ng-model="Affiliation.Maxredeem" ng-class="{submitted:submitted}" class="form-control" numbers-only>
+                                <div ng-messages="fmcode.txtmaxredeem.$error" style="color: #ff0000" role="alert" ng-if="fmcode.txtmaxredeem.$dirty || submitted">
+                                    <div ng-message="belowminimum">Must be at least {{min}}.</div>
+                                    <div ng-message="nonnumeric">Enter an integer.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="" style="border:none !important">Redeem by:</label>
+                            <div class="input-group">
+                                <input type="text" name="txtredeem" ng-model="Affiliation.Redeemby" ng-class="{submitted:submitted}" class="form-control date_field" id="txtredeem" datepicker readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-info" value="Create Coupon" />
+                        <button type="button" class="btn btn-default" ng-click="ResetForm()">Cancel</button>
+                        <div class="errormsg" style="color:red;display:none;">{{message}}</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade salesDataInfo" tabindex="-1" role="dialog" aria-labelledby="salesDataInfo">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left">Affiliate code: {{Act_CouponCode}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="scroll-list">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;">Id</th>
+                                    <th>Date</th>
+                                    <th>Sales</th>
+                                    <th>Pre DiscountSales</th>
+                                    <th>Commission</th>
+                                    <th>Subscribers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="r in pagedItems2">
+                                    <td style="text-align:center;">{{$index +1}}</td>
+                                    <td>{{r.Date}}</td>
+                                    <td>{{r.TotalSales | currency}}</td>
+                                    <td>${{r.PreDiscountSale }}</td>
+                                    <td>${{r.AffiliateCommission }}</td>
+                                    <td>{{r.TotalUsers}}</td>
+                                </tr>
+                                <tr ng-show="modalmsg">
+                                    <td colspan="6">
+                                        No Records found!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-info pull-right" type="button" onclick="GetReport()" ng-show="pagedItems2.length"><i class="fa fa-download"></i> Download</button>
+                    </div>
+                    <input type="hidden" id="hdnCodeId" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="adminspinner"></i>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/admin/affiliation")
+    <script>
+    function GetReport()
+    {
+        var Id = $('#hdnCodeId').val();
+        if (Id != "" || Id != null) {
+            window.location.href = "../Affiliation/GetAffiliateReport?AffiliateID=" + Id;
+        } else {
+            alert("Report id was not found!");
+        }
+    }
+    </script>
+}

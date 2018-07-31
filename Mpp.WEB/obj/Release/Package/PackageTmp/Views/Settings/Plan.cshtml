@@ -1,0 +1,236 @@
+﻿@model Mpp.UTILITIES.UserPlan
+@{
+    ViewBag.Title = "Account";
+    ViewBag._NavAccount = "active";
+    Layout = "~/Views/Shared/_Settings.cshtml";
+    var IsCardAdded = (bool)ViewBag.IsCardAdded;
+    var PeriodEndDate = "";
+    var TrailEndDate = (DateTime)ViewBag.TrailEnd;
+    var Today = DateTime.Now;
+    var PlanName = "N/A";
+
+    if (!String.IsNullOrWhiteSpace(Model.NextDate))
+    {
+        PlanName = Model.PlanName;
+        PeriodEndDate = Convert.ToDateTime(Model.NextDate).ToShortDateString();
+    }
+}
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">@Html.ActionLink("Plan", "Plan", routeValues: null)</li>
+    <li role="presentation" id="tab_amazon">@Html.ActionLink("Connect Your Amazon Account", "AmazonAccount", routeValues: null)</li>
+</ul>
+
+<div class="tab-content">
+    <div>
+        <div class="planSection">
+
+            <div class="planBox">
+                <h6>Your Plan: <span class="planName">@Model.PlanName</span></h6>
+                <p>Next Billing Period Starts On: <b class="plandate">@PeriodEndDate</b></p>
+
+                <div class="planDetails">
+                    <ul class="clearfix list-unstyled">
+                        <li>
+                            <span>SKU’s</span>
+                            <b>@Model.SkuCount</b>
+                        </li>
+                        <li>
+                            <span>Keywords</span>
+                            <b>@Model.KeyCount</b>
+                        </li>
+                        <li>
+                            <span>Price</span>
+                            <b>$@Model.Price</b>
+                        </li>
+                        <li>
+                            <span>Promo Code</span>
+                            <input type="text" id="txtpromocode">
+                            <a href="#" id="btnpromo" onclick="applypromo();" class="applyPromoBtn">Apply</a>
+                            <div id="divError" style="font-weight:500;padding-left:122px;">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <p>
+                <a href="#" onclick="changeplanstatus();" class="cancelPlanBtn"></a>
+                @*<a href="javascript:;" class="btn btn-link"><i>Understand how the plans and pricing works here.</i></a>*@
+            </p>
+
+        </div>
+        <div id="myModel12" class="plan-overlay" style="display: none;">
+            <div class="popup-plan">
+                <span id="lblpromoAddcard" class="plan-lbl">
+                    
+                </span>
+                <br />
+                <div style="display: inline-block; " class="" id="divYes">
+                    <input class="btn btn-primary btn-sm" value="Add Card" type="button" onclick="NavigateToCard()" />  
+                </div>
+            </div>
+        </div>
+        <div id="myModel13" class="plan-overlay" style="display: none;">
+            <div class="popup-plan">
+                <span class="plan-lbl">
+                    Thank you for subscribing to My PPC Pal.
+                </span>
+                <br />
+                <div style="display: inline-block; " class="" id="divYes">
+                    <input class="btn btn-primary btn-sm" value="OK" type="button" onclick="NavigateToPlan()" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group text-danger" id="divResponse">
+        </div>
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryajax")
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var status = '@Session["PlanStatus"]';
+                var planid = '@Session["PlanID"]';
+                localStorage.setItem("PlanStatus", status);
+                if (('@IsCardAdded' == 'False') || status == 0 || status == 2) {
+                    if (planid != 1 && status == 1) {
+                        $('.cancelPlanBtn').html("UnSubscribe");
+                    } else if (status == 2) {
+                        $('.cancelPlanBtn').html("Subscribe");
+                    } else {
+                        var trailend = new Date('@TrailEndDate');
+                        var today = new Date('@Today');
+                        $('.cancelPlanBtn').html("Subscribe");
+                        if (status == 0 || (trailend < today && planid == 1))
+                            disableClick('#divPlanPopup', 'settings');
+                    }
+                } else {
+                    $('.cancelPlanBtn').html("UnSubscribe");
+                }
+            });
+
+            function changeplanstatus() {
+                var status = localStorage.getItem("PlanStatus");
+                var planid = '@Session["PlanID"]';
+                if ('@IsCardAdded' == 'False' && (planid == 1 || status != 1)) {
+                        NavigateToCard();
+                }
+                else {
+                    var confm = false;
+                    if (status == 0 || status == 2) {
+                        confm = confirm("Are you sure want to subscribe the plan? Note: Any outstanding promotion code will be applied if it's valid.");
+                        status = 1;
+                    }
+                    else {
+                        confm = confirm("Are you sure want to cancel subscription?");
+                        status = 2;
+                    }
+
+                    if (confm) {
+                        $("#settingspinner").show();
+                        _ajaxChangeplanstatus(status);
+                    };
+                }
+            }
+            function _ajaxChangeplanstatus(p_status) {
+                var _url = '@Url.Action("PlanSubscription", "Settings")';
+                $.ajax({
+                    type: "POST",
+                    url: _url,
+                    data: JSON.stringify({ planStatus: p_status, nextPlanDate: '@PeriodEndDate' }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (data, status) {
+                        if (status == "success") {
+                            var msg;
+                            if (data == "") {
+                                if (p_status == 2) {
+                                    if ('@PlanName' == 'Trial') {
+                                        msg = "We are sorry to see you go! Your current trial period ends on " + '@TrailEndDate.ToShortDateString()' + ", you will have full access to My PPC Pal until the day your trial period ends!";
+                                    }
+                                    else {
+                                        msg = "We are sorry to see you go! Your current billing period ends on " + '@PeriodEndDate' + ", you will have full access to My PPC Pal until the day your billing period ends!";
+                                    }
+                                    localStorage.setItem("PlanStatus", 2);
+                                    $('.cancelPlanBtn').html("Subscribe");
+                                } else {
+                                    $('#myModel13').css('display', 'block');
+                                    localStorage.setItem("PlanStatus", 1);
+                                    $('.cancelPlanBtn').html("Unsubscribe");
+                                }
+                            }
+                            else {
+                                msg = data;
+                            }
+                            $('#divResponse').html(msg);
+                            $("#settingspinner").hide();
+                        }
+                    },
+                    error: function (status) {
+                        $('#divResponse').html("Error! Please try again");
+                        $("#settingspinner").hide();
+                    }
+                });
+            }
+
+            function applypromo() {
+                var code = $('#txtpromocode').val();
+                $('#divError').css("color", "red");
+                if (code == "") {
+                    $('#divError').html("Promocode must be entered");
+                    $('#txtpromocode').css("border", "1px solid red");
+                    $('#txtpromocode').focus();
+                } else {
+                    $("#settingspinner").show();
+                    setTimeout(function () {
+                        _ajaxApplycoupon(code);
+                    }, 100)
+                }
+            }
+
+            function _ajaxApplycoupon(code) {
+                var _url = '@Url.Action("ApplyCoupon", "Settings")';
+                $.ajax({
+                    type: "POST",
+                    url: _url,
+                    data: JSON.stringify({ code: code }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (data, status) {
+                        if (status == "success") {
+                            var msg;
+                            if (data == "") {
+                                $('#divError').css("color", "#4caf50");
+                                msg = "Promo code applied and the change will affect the next invoice.";
+                            }
+                            else {
+                                msg = data;
+                            }
+                            if ('@IsCardAdded' == 'False' && data == "") {
+                                $('#myModel12').show();
+                                $('#divError').html('');
+                                $('#lblpromoAddcard').html(msg + " Please add a payment method to continue using My PPC Pal");
+                            }
+                            else {
+                                $('#divError').html(msg);
+                            }
+                            $("#settingspinner").hide();
+                        }
+                    },
+                    error: function (status) {
+                        $('#divError').html("Error! Please try again");
+                        $("#settingspinner").hide();
+                    }
+                });
+            }
+
+            function ReturnToPlan() {
+                $('.plan-overlay').hide();
+            }
+
+            function NavigateToPlan(){
+                window.location.href = "../Settings/Plan";
+            }
+        </script>
+    </div>
+</div>

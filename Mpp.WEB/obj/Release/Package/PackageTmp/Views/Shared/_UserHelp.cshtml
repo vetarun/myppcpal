@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag._TopMenu5 = "active";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    <style>
+        .panel-body{
+            font-size:16px;
+            color:#535353;
+        }
+        .frame-border { 
+            border:3px solid #EEE; 
+        }
+    </style>
+</head>
+<body>
+    <div class="mainContainer">
+        @Html.Partial("_Header")
+        <div class="mainContent">
+            <div class="mainWrap" style="padding: 0;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="settingContainer withSiderbar clearfix">
+                            <aside class="sidebar">
+                                <h2>Help</h2>
+                                <ul class="clearfix list-unstyled">
+                                    <li id="tab_billing" class="@ViewBag._NavInstruction">
+                                        <a href="@Url.Action("Instructions","Help")"><i class="fa fa-credit-card"></i>Instructions</a>
+                                    </li>
+                                    <li id="tab_sprofile" class="@ViewBag._NavVideo">
+                                        <a href="@Url.Action("Videos","Help")"><i class="fa fa-user"></i>Videos</a>
+                                    </li>
+                                    <li id="tab_account" class="@ViewBag._NavFAQ">
+                                        <a href="@Url.Action("Questions","Help")"><i class="fa fa-user"></i>FAQ</a>
+                                    </li>
+                                </ul>
+                            </aside>
+                            <div class="contentRight">
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_Footer")
+    </div>
+    <div id="loader1" class="loading_process" style="display: none;">
+        <div class="process-box">
+            <span class="process-lbl">
+                Your session will expire in less
+                than 2 minutes.<br />
+                Would you like to extend the session?
+            </span>
+            <br />
+            <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                <button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="loader2" class="loading_process" style="display: none;">
+        <div class="sessionexpire-box">
+            <span class="process-lbl">
+                Session expired. You will be redirected
+                to home page
+            </span>
+            <br />
+            <div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+                 id="divsessionExpired">
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jqueryajax")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

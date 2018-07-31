@@ -1,0 +1,280 @@
+﻿@using Mpp.UTILITIES
+<!DOCTYPE html>
+@{
+    ViewBag._TopMenu4 = "active";
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    <style>
+        .tbl-modal{
+            font-size:16px;
+            color:#535353;
+        }
+        .tbl-modal ul li{
+            padding:3px;
+        }
+        .showdivmsg {
+            display: inline-block !important;
+        }
+       /*nano bar*/
+       .nanobar {
+            height: 2px;
+        }
+       .bar {
+        background:#0297d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="mainContainer">
+        @Html.Partial("_Header")
+        <div class="mainContent">
+            <div class="mainWrap" style="padding: 0;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="settingContainer withSiderbar clearfix">
+                            <aside class="sidebar">
+                                <h2>Settings</h2>
+                                <ul class="clearfix list-unstyled">
+                                    <li id="tab_billing" class="@ViewBag._NavBilling">
+                                        <a href="@Url.Action("Cards","Settings")"><i class="fa fa-credit-card"></i> Billing</a>
+                                    </li>
+                                    <li id="tab_sprofile" class="@ViewBag._NavProfile">
+                                        <a href="@Url.Action("ProfileEmail","Settings")"><i class="fa fa-user"></i> Profile</a>
+                                    </li>
+                                    <li id="tab_account" class="@ViewBag._NavAccount">
+                                        <a href="@Url.Action("Plan","Settings")"><i class="fa fa-user"></i> Account</a>
+                                    </li>
+                                </ul>
+                            </aside>
+                            <div class="contentRight">
+                                @RenderBody()
+                                <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" style="display:none;" id="settingspinner"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_Footer")
+    </div>
+    <div id="divPlanPopup" class="plan-overlay" style="display: none;">
+        <div class="popup-plan">
+            <span class="plan-lbl">
+                Please subscribe the plan to access <span style="color:steelblue;">My PPC Pal</span> services.
+            </span>
+            <br />
+            <div style="display: inline-block; vertical-align: middle;" class="" id="divYes">
+                <button type="submit" onclick="javascript:ReturnToPlan();" class="btn btn-block btn-info">OK</button>
+            </div>
+        </div>
+    </div>
+    <div id="divAmazonPopup" class="plan-overlay" style="display: none;">
+        <div class="popup-plan">
+            <span class="plan-lbl" id="txtAccessPopUp">
+                
+            </span>
+            <br />
+            <div style="display: inline-block; vertical-align: middle;" class="" id="divYes">
+                <button type="submit" onclick="javascript:ReturnToAccount()" class="btn btn-block btn-info">OK</button>
+            </div>
+        </div>
+    </div>
+    <div id="divSuccessPopup" class="plan-overlay" style="display: none;">
+        <div class="popup-plan">
+            <span class="plan-lbl">
+                Thank you, we will notify you once your data is ready!
+            </span>
+            <br />
+            <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                <button onclick="javascript:window.location.href= '../Settings/AmazonAccount' " type="button" class="btn btn-block btn-info">OK</button>
+            </div>
+        </div>
+    </div>
+    <div class="Loadimg" style="display:none;color:#a94442" id="divProgress">
+        <div class="Loadimg1">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <div class="modal fade sellerAccessInfo1" tabindex="-1" role="dialog" aria-labelledby="sellerAccessInfo" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <img id="instruct_cancel1" class="imgcancel" src="~/Content/images/no-success.png" alt="nosuccess" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <center>
+                        <h3 id="title-instruction">Instructions on Granting User Access to My PPC Pal</h3>
+                    </center>
+                </div>
+                <div class="modal-body">
+                    <div id="div-instruction">
+                        <div class="tbl-modal">
+                            <ul id="ul-instruction1">
+                                <li>
+                                    <span>Step 1: Login to your Amazon Seller Central Account</span>
+                                </li>
+                                <li>
+                                    <span>Step 2: Click “Settings” then “User Permissions”</span>
+                                </li>
+                                <li>
+                                    <span>Step 3: Under the “Add a New Seller Central User”, enter MyPPCPal in the “Name” Box, <span style="color:#0297d9;">admin@myppcpal.com</span> in the “Email Address” box, select “English” under Language and click “Send Invitation”</span>
+                                    <img src="~/Content/images/Mppinstruction1.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                <li>
+                                    <span>
+                                        Step 4: My PPC Pal will accept the invitation and Amazon will confirm this with you by email. Once confirmed, return to your Seller Central account and under user permissions, confirm access for
+                                        <span style="color:#0297d9;">admin@myppcpal.com</span>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>Step 5: Locate MyPPCPal under “Current Users” and click “Manage Permissions” to edit permissions for access</span>
+                                    <img src="~/Content/images/Mppinstruction2.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                </ul>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade sellerAccessInfo" tabindex="-1" role="dialog" aria-labelledby="sellerAccessInfo" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <img id="instruct_cancel" class="imgcancel" src="~/Content/images/no-success.png" alt="nosuccess" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <center>
+                        <h3 id="title-instruction">Instructions on Granting User Access to My PPC Pal</h3>
+                    </center>
+                </div>
+                <div class="modal-body">
+                    <div id="div-instruction">
+                        <div class="tbl-modal">
+                            <ul id="ul-instruction1">
+                                <li>
+                                    <span>Step 1: Login to your Amazon Seller Central Account</span>
+                                </li>
+                                <li>
+                                    <span>Step 2: Click “Settings” then “User Permissions”</span>
+                                </li>
+                                <li>
+                                    <span>Step 3: Under the “Add a New Seller Central User”, enter MyPPCPal in the “Name” Box, <span style="color:#0297d9;">admin@myppcpal.com</span> in the “Email Address” box, select “English” under Language and click “Send Invitation”</span>
+                                    <img src="~/Content/images/Mppinstruction1.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                <li>
+                                    <span>
+                                        Step 4: My PPC Pal will accept the invitation and Amazon will confirm this with you by email. Once confirmed, return to your Seller Central account and under user permissions, confirm access for
+                                        <span style="color:#0297d9;">admin@myppcpal.com</span>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>Step 5: Locate MyPPCPal under “Current Users” and click “Manage Permissions” to edit permissions for access</span>
+                                    <img src="~/Content/images/Mppinstruction2.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                <li>
+                                    <span>Step 6: Under the “Advertising” section, select “View & Edit” for “Campaign Manager” option</span>
+                                    <img src="~/Content/images/Mppinstruction3.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                <li>
+                                    <span>Step 7: Under the “Reports” section, select “View” for “Product Ads Performance Reports” option</span>
+                                    <img src="~/Content/images/Mppinstruction4.png" alt="selleraccess1" style="width:100%" />
+                                </li>
+                                <li>
+                                    <span>Step 8: Scroll to the bottom and click “Continue”. User permissions have now been granted to My PPC Pal successfully</span>
+                                </li>
+                            </ul>
+                            <ul id="ul-instruction2" style="display:none;">
+                                <li>
+                                    <span>Step 1: Login to your Amazon Seller Central Account</span>
+                                </li>
+                                <li>
+                                    <span>Step 2: Click “Settings” then “Account Info”</span>
+                                </li>
+                                <li>
+                                    <span>Step 3: Click “Your Seller Profile”</span>
+                                </li>
+                                <li>
+                                    <span>Step 4: Locate the “Seller Information - Amazon.com” Box</span>
+                                </li>
+                                <li>
+                                    <span>Step 5: The name located in the “Display Name” section is your Seller Name to enter under your My PPC Pal account information</span>
+                                    <img src="~/Content/images/Mppinstruction6.png" alt="selleraccess1" style="height:150px;width:100%" />
+                                </li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-info pull-left" id="btnprevinstr" onclick="ShowPrevInstructions()" style="margin-top:15px;display:none;">Back</button>
+                        <button class="btn btn-info pull-right" id="btnnextinstr" onclick="ShowNextInstructions()" style="margin-top:15px;">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade ReportsAccessInfo" tabindex="-1" role="dialog" aria-labelledby="sellerAccessInfo" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <img id="report_cancel" class="imgcancel" src="~/Content/images/no-success.png" alt="nosuccess" />
+            <div class="modal-content">
+                <div class="modal-header" id="title-instruction">
+                    <center>
+                        <h3></h3>
+                    </center>
+                </div>
+                <div class="modal-body">
+                    <div id="div-instruction">
+                        <div class="tbl-modal">
+                            <div id="instruction1">
+                                <span>Under the “Advertising” section, select “View & Edit” for “Campaign Manager” option</span>
+                                <img src="~/Content/images/Mppinstruction3.png" alt="selleraccess1" style="width:100%" />
+                            </div>
+                            <div id="instruction2">
+                                <span>Under the “Reports” section, select “View” for “Product Ads Performance Reports” option</span>
+                                <img src="~/Content/images/Mppinstruction4.png" alt="selleraccess2" style="width:100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loader1" class="loading_process" style="display: none;">
+        <div class="process-box">
+            <span class="process-lbl">
+                Your session will expire in less
+                than 2 minutes.<br />
+                Would you like to extend the session?
+            </span>
+            <br />
+            <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                <button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="loader2" class="loading_process" style="display: none;">
+        <div class="sessionexpire-box">
+            <span class="process-lbl">
+                Session expired. You will be redirected
+                to home page
+            </span>
+            <br />
+            <div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+                 id="divsessionExpired">
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/nanobar.min.js"></script>
+    <script type="text/javascript">
+        $(window).load(function () {
+            var nanobar = new Nanobar();
+            // size bar 100% and and finish
+            nanobar.go(100);
+            $("#settingspinner").show();
+            setTimeout(function () { $("#settingspinner").hide(); }, 100);
+        })
+    </script>
+</body>
+</html>

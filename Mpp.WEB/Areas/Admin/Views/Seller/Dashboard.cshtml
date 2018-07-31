@@ -1,0 +1,812 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    ViewBag._TopMenu1 = "active";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .editSeller {
+        padding: 0;
+        border: 0;
+        background: 0 0;
+    }
+
+    #campaignSearchBox {
+        position: relative;
+        z-index: 1;
+    }
+
+    .ui-autocomplete {
+        max-height: 300px;
+        width: 350px;
+        overflow-y: auto;
+    }
+
+    .ProjAlertFull {
+        width: 450px;
+        background: #fff;
+        box-shadow: 0 0 51px rgba(0,0,0,.4);
+        height: 100%;
+        max-width: 100%;
+        opacity: 0;
+        overflow-y: auto;
+        position: fixed;
+        right: -100%;
+        top: 0;
+        -webkit-transition: all .5s ease 0s;
+        -moz-transition: all .5s ease 0s;
+        -o-transition: all .5s ease 0s;
+        transition: all .5s ease 0s;
+        z-index: 99999;
+    }
+
+        .ProjAlertFull.active {
+            opacity: 1;
+            right: 0;
+        }
+
+    button.alertclose {
+        background: 0 0;
+        border: 0;
+        cursor: pointer;
+        height: 40px;
+        line-height: 40px;
+        padding: 0;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        top: 0;
+        width: 40px;
+        z-index: 10;
+    }
+
+    input.ng-dirty.ng-invalid {
+        border: 1px solid red;
+    }
+
+    input.submitted.ng-invalid {
+        border: 1px solid #f00;
+    }
+
+    .modal-body {
+        padding: 0 30px !important;
+    }
+
+    label {
+        float: left;
+        color: #999 !important;
+        width: 160px;
+    }
+
+    .input-group {
+        width: 200px !important;
+    }
+
+        .input-group input {
+            width: 200px !important;
+            height: 35px;
+            border-radius: 6px !important;
+        }
+
+    .modal-footer {
+        padding: 20px 30px 40px;
+    }
+
+    select:hover, .btnSwitch label, .cusrsorLink {
+        cursor: pointer;
+    }
+    .cusrsorLink.active {
+        color: #222 !important;
+    }
+
+   
+    
+</style>
+<div ng-controller="DashboardCtrl">
+    <div class="sellerDashboard">
+        <div class="SDContent">
+            <div class="dashboardNav clearfix">
+                <div class="col-sm-4">
+                    <a href="#" class="menuBig">
+                        <h4 class="cusrsorLink" ng-click="loadData(0)"><i class="fa fa-user" style="color: #199bd7;"></i> Customers  </h4>
+                        <footer class="DnavFoot">
+                            <table width="100%" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(1)">Paying</h6>
+                                                <p class="big">{{AdminData.TotalActivePaid}}</p>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(2)">New Paying</h6>
+                                                <p class="big">{{AdminData.TotalNewlyPaid}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(3)">Active Trial</h6>
+                                                <p class="big">{{AdminData.TotalActiveTrail}}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </footer>
+                    </a>
+                </div>
+                <div class="col-sm-4">
+                    <a href="#" class="menuBig">
+                        <h4 ><i class="fa fa-file-archive-o" style="color: #ed4d36;"></i> Revenue</h4>
+                        <footer class="DnavFoot">
+                            <table width="100%" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink " ng-click="RevenueData(1)"  >This Month</h6>
+                                                <p class="big">${{AdminData.CurrentMonthlySales}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="RevenueData(2)">Last Month</h6>
+                                                <p class="big">${{AdminData.LastMonthSales}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="RevenueData(0)">This Year</h6>
+                                                <p class="big">${{AdminData.TotalYearlySales}}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </footer>
+                    </a>
+                </div>
+                <div class="col-sm-4">
+                    <a href="#" class="menuBig">
+                        <h4 class="cusrsorLink" ng-click="loadData(0)" ><i class="fa fa-user-secret" style="color: #f29047;"></i> Analytics</h4>
+                        <footer class="DnavFoot">
+                            <table width="100%" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(4)">Pending Confirmation</h6>
+                                                <p class="big">{{AdminData.Inactive}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(5)">Pending Access </h6>
+                                                <p class="big">{{AdminData.PendingAccess}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(6)">Trial Ended </h6>
+                                                <p class="big">{{AdminData.TrailEnd}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tdBox clearfix">
+                                                <h6 class="cusrsorLink" ng-click="loadData(7)">Unsubscribed</h6>
+                                                <p class="big">{{AdminData.Unsubscribed}}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </footer>
+                    </a>
+                </div>
+            </div>
+
+            <div class="DCContent">
+                <div class="DCFilters clearfix">
+                    <div class="pull-right">
+                        <input type="text" placeholder="&#xF002; Search Sellers" ng-model="filterParams.nameSearch" class="form-control" style="font-family:Arial, FontAwesome">
+                        <div class="customFilterStyle clearfix">
+                            <label>Status</label>
+                            <select ng-model="filterParams.SelectedStatus">
+                                <option value="All">All</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="customFilterStyle clearfix">
+                            <label>Plan</label>
+                            <select ng-init="SelectedPlan=1" ng-model="filterParams.SelectedPlan">
+                                <option value="All">ALL</option>
+                                <option value="1">TRIAL</option>
+                                <option value="2">SOLOPRENEUR</option>
+                                <option value="3">STARTUP</option>
+                                <option value="4">BUSINESS TIME</option>
+                                <option value="5">BIG BUSINESS</option>
+                                <option value="6">ENTERPRISE</option>
+                                <option value="7">NO PLAN</option>
+                                <option value="8">CUSTOM</option>
+                            </select>
+                        </div>
+                        <div class="downloadCSV">
+                            <button title="Download CSV" onclick="DownloadActiveUsersCSV()"><i class="fa fa-download" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="DCCTable">
+                    <table class="table tblsorting">
+                        <thead>
+                            <tr>
+                                <th ng-class="selectedCls('FirstName')" ng-click="sort_by('FirstName')">Seller</th>
+                                <th ng-class="selectedCls('Email')" ng-click="sort_by('Email')">Email</th>
+                                <th ng-class="selectedCls('SellerAccess')" ng-click="sort_by('SellerAccess')">SellerAccess</th>
+                                <th ng-class="selectedCls('StartDate')" ng-click="sort_by('StartDate')">Date of joining</th>
+                                <th ng-class="selectedCls('Plan')" ng-click="sort_by('Plan')">Plan</th>
+                                <th ng-class="selectedCls('PlanStatus')" ng-click="sort_by('PlanStatus')">PlanStatus</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr ng-show="filteredItems.length>5">
+                                <td colspan="8" style="border-bottom:0 !important">
+                                    <div class="pull-left" style="padding:15px;">
+                                        <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems[currentPage].length}} of {{filteredItems.length}} items</span>
+                                        <div style="padding-top:12px;text-align:left!important">
+                                            <span>
+                                                Show
+                                                <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize1()">
+                                                    <option value="10">10</option>
+                                                    <option value="20">20</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                                entries
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="pagination pull-right">
+                                        <ul>
+                                            <li ng-class="{disabled: currentPage == 0}">
+                                                <a href="" ng-click="prevPage1()">« Prev</a>
+                                            </li>
+
+                                            <li ng-repeat="n in pagerange(pagedItems.length, currentPage, currentPage + gap) "
+                                                ng-class="{active: n == currentPage}"
+                                                ng-click="setPage1()">
+                                                <a href="" ng-bind="n + 1">1</a>
+                                            </li>
+
+                                            <li ng-class="{disabled: (currentPage) == pagedItems.length - 1}">
+                                                <a href="" ng-click="nextPage1()">Next »</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr ng-repeat="r in pagedItems[currentPage] | orderBy:sort.sortingOrder:sort.reverse">
+                                <td><span class="profileImage" ng-style="getBackgroundColor(r.FirstName)">{{r.FirstName | firstAlphabet | uppercase}}</span>{{r.FirstName | capitalize}}</td>
+                                <td><img alt="">{{r.Email}}</td>
+                                <td>
+                                    <div class="status" ng-if="r.SellerAccess === true">
+                                        <span class="statusIcon green"></span>
+                                    </div>
+                                    <div class="status" ng-if="r.SellerAccess === false">
+                                        <span class="statusIcon red"></span>
+                                    </div>
+                                </td>
+                                <td>{{r.StartDate | date}}</td>
+                                <td>{{r.Plan| PlanName}}</td>
+                                <td>
+                                    <div class="status" ng-show="r.PlanStatus === 0">
+                                        <span class="statusIcon red"></span>
+                                    </div>
+                                    <div class="status" ng-show="r.PlanStatus === 1">
+                                        <span class="statusIcon green"></span>
+                                    </div>
+                                    <div class="status" ng-show="r.PlanStatus === 2">
+                                        <span class="statusIcon yellow"></span>
+                                    </div>
+                                </td>
+                                <td class="viewDetail">
+                                    <div>
+                                        <ul class="actionList" id="tab_nav">
+                                            <li class="edit">
+                                                <button class="editSeller" data-toggle="tooltip" data-placement="top" title="Edit" ng-click="UpdateSlider(r.SellerID)"><i class="fa fa-pencil"></i></button>
+                                            </li>
+                                            <li class="email" data-target=".modelSellerEmail" data-toggle="modal" data-backdrop="static" data-keyboard="false" ng-click="SetSellerEmail(r.Email)">
+                                                <button type="button" data-toggle="tooltip" data-placement="top" title="Email" tooltip><i class="fa fa-envelope-square"></i></button>
+                                            </li>
+                                            <li class="log" data-target=".modelSellerlogs" data-toggle="modal" data-backdrop="static" ng-click="setUserId(r.SellerID)" data-keyboard="false">
+                                                <button type="button" data-toggle="tooltip" data-placement="top" title="Log" tooltip><i class="fa fa-history"></i></button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-show="!pagedItems[currentPage].length">
+                                <td colspan="7">
+                                    No Records found!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-right" ng-show="pagedItems[currentPage].length">
+                        <span class="statusIcon green"></span> - Active
+                        <span class="statusIcon red"></span> - In Active
+                        <span class="statusIcon yellow"></span> - Unsubscribed
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SDContent end -->
+    </div>
+    <div class="ProjAlertFull" id="ProjAlertFull">
+        <div class="SDSidebar">
+            <div class="profileHead">
+                <button type="button" class="alertclose" ng-click="CloseEditor()"><i class="fa fa-remove"></i></button>
+                <figure><span class="profileImage" ng-style="getBackgroundColor(Seller.FirstName)">{{Seller.FirstName | firstAlphabet | uppercase}}</span></figure>
+                <figcaption>
+                    <h6>{{Seller.FirstName | capitalize}}&nbsp;{{Seller.LastName | capitalize}}</h6>
+                    <div class="status" ng-if="Seller.Active == true">
+                        <p><small class="s_active"></small>ACTIVE</p>
+                    </div>
+                    <div class="status" ng-if="Seller.Active == false">
+                        <p><small class="SStatus s_inactive"></small>IN-ACTIVE</p>
+                    </div>
+                </figcaption>
+            </div>
+            <div class="profileBody">
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Email</label>
+                    </div>
+                    <div class="col-md-7">
+                        <p>{{Seller.Email}}</p>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Block</label>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="btnSwitch">
+                            <label><input type="checkbox" id="chkSeller_{{Seller.SellerID}}" ng-checked="Seller.Active"><span></span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Date of joining</label>
+                    </div>
+                    <div class="col-md-7">
+                        <p>{{Seller.StartDate | date}}</p>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Plan</label>
+                    </div>
+                    <div class="col-md-7">
+                        <p>{{Seller.Plan | PlanName}}</p>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Seller Access</label>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="btnSwitch">
+                            <label><input type="checkbox" id="chkSellerAccess_{{Seller.SellerID}}" ng-checked="Seller.SellerAccess"><span></span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Plan Status</label>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="status" ng-if="Seller.PlanStatus === 0">
+                            <span class="statusIcon red"></span>
+                        </div>
+                        <div class="status" ng-if="Seller.PlanStatus === 1">
+                            <span class="statusIcon green"></span>
+                        </div>
+                        <div class="status" ng-if="Seller.PlanStatus === 2">
+                            <span class="statusIcon green"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Promo Code</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" id="txtpromocode" style="height:32px;width:125px;">
+                        <a href="#" id="btnpromo" onclick="applypromo();" class="applyPromoBtn" style="background:#d55821;">Apply</a>
+                        <input type="hidden" id="hdncustmid" value="{{Seller.Stp_CustID}}" />
+                        <input type="hidden" id="hdnplanstatus" value="{{Seller.PlanStatus}}" />
+                        <div id="divError" style="font-weight:500;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-md-5">
+                        <label>Activation Email</label>
+                    </div>
+                    <div class="col-md-7">
+                        <a href="#" id="lnkemail" ng-click="ActivationEmail()" style="text-decoration:underline;font-size:medium;">Send</a>
+                    </div>
+                </div>
+            </div>
+            <div class="profileFoot">
+                <button type="submit" class="btn btn-lg btn-info" ng-click="UpdateSeller(Seller.SellerID)">Update</button>
+                <button type="button" class="btn btn-lg btn-default" style="margin-left:35px;" ng-click="DeleteSeller(Seller.SellerID, Seller.Stp_CustID)">Delete</button>
+                @*<button type="button" class="btn btn-lg btn-default" ng-click="UpdateSlider(Seller.SellerID)">Cancel</button>*@
+                <div class="errormsg" style="color:red;display:none;margin-top:10px;font-size:medium;">{{message}}</div>
+            </div>
+            <div class="text-right" style="padding-top:15px;">
+                <span class="statusIcon green"></span> - Active
+                <span class="statusIcon red"></span> - In Active
+                <span class="statusIcon yellow"></span> - Unsubscribed
+            </div>
+            <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" id="promospinner" style="display:none;font-size:40px;"></i>
+        </div>
+        <!-- SDSidebar end -->
+    </div>
+    <div class="modal fade modelSellerEmail" tabindex="-1" role="dialog" aria-labelledby="sendEmail">
+        <div class="modal-dialog " role="document" style="width:450px;">
+            <div class="modal-content">
+                <button type="button" class="close" ng-click="CloseEmailModal()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="modal-header clearfix" style="margin-top: 20px; padding-left: 30px;">
+                    <h2 class="modal-title">Access code email</h2>
+                </div>
+                <form novalidate name="formemail">
+                    <div class="modal-body">
+                        <div>
+                            <label class="" style="border:none !important"> Seller Email:</label>
+                            <div class="input-group">
+                                <span>{{sellerEmail}}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="" style="border:none !important"> Seller AccessCode:</label>
+                            <div class="input-group">
+                                <input type="text" name="txtcode" ng-model="SellerCode" ng-class="{submitted:submitted}" class="form-control" required autofocus>
+                                <span class="error" ng-show="(formemail.txtcode.$dirty || submitted) && formemail.txtcode.$error.required">Required</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-info" value="Send" ng-click="SendCode()" />
+                        <button type="button" class="btn btn-default" ng-click="CancelEmailModal()">Cancel</button>
+                        <div class="errormsg" style="color:red;display:none;">{{message}}</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade modelSellerlogs" tabindex="-1" role="dialog" aria-labelledby="logDataInfo" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content" style="height:800px;">
+                <button type="button" class="close" ng-click="Close()" data-dismiss="modal">&times;</button>
+                <div class="modal-body dashboardTabs" ng-init="initAutoComplete();">
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="logOptions active"><a href="#campaignLog" ng-click="ClearPaging();getCampLog(CampID,userId)" aria-controls="campaignLog" role="tab" data-toggle="tab">Campaign Logs</a></li>
+                        <li role="presentation" class="logOptions"><a href="#userAccessLog" aria-controls="userAccessLog" ng-click="GetUserAccessLog(true)" role="tab" data-toggle="tab">User Access Logs</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="campaignLog">
+                            <center>
+                                <div id="campaignSearchBox">
+
+                                    <div class="fa-wrap" style="width:350px">
+                                        <input id="srchCampaigns" class="form-control" placeholder="Search Campaign">
+                                        <i class="fa fa-spinner fa-spin" id="srchSpiner"  style="font-size:24px;display:none"></i>
+                                    </div>
+
+                                </div>
+                            </center>
+                            <br />
+                            <div class="scroll-list">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th data-sortable="true">Modified On</th>
+                                            <th data-sortable="true">Time</th>
+                                            <th data-sortable="true">Modified Field</th>
+                                            <th data-sortable="true">Old Value</th>
+                                            <th data-sortable="true">New Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="r in pagedItems1.records">
+                                            <td>{{r.ModifiedOn}}</td>
+                                            <td>{{r.Time}}</td>
+                                            <td>{{r.ModifiedField}}</td>
+                                            <td>{{r.OldValue}}</td>
+                                            <td>{{r.NewValue}}</td>
+                                        </tr>
+                                        <tr ng-show="!pagedItems1.records.length">
+                                            <td colspan="5">
+                                                No Records found!
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <table class="table">
+                                <tfoot>
+                                    <tr ng-show="pagedItems1.recordsTotal>0">
+                                        <td colspan="8">
+                                            <div class="pull-left">
+                                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                                <div style="padding-top:12px;">
+                                                    <span>
+                                                        Show
+                                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="50">50</option>
+                                                            <option value="100">100</option>
+                                                        </select>
+                                                        entries
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="pagination pull-right">
+                                                <ul>
+                                                    <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                                    </li>
+                                                    <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                                        ng-class="{active: n == pagedItems1.currentPage}"
+                                                        ng-click="setPage()">
+                                                        <a href="" ng-bind="n + 1">1</a>
+                                                    </li>
+                                                    <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage-1}">
+                                                        <a href="" ng-click="nextPage()">Next »</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="userAccessLog">
+
+                            <br />
+                            <div class="scroll-list">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th data-sortable="true">Modified On</th>
+                                            <th data-sortable="true">Modified By</th>
+                                            <th data-sortable="true">Modified Field</th>
+                                            <th data-sortable="true">Old Value</th>
+                                            <th data-sortable="true">New Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="r in pagedItems1.records">
+                                            <td>{{r.ModifiedOn}}</td>
+                                            <td>{{r.ModifiedBy}}</td>
+                                            <td>{{r.ModifiedField}}</td>
+                                            <td>{{r.OldValue}}</td>
+                                            <td>{{r.NewValue}}</td>
+                                        </tr>
+                                        <tr ng-show="!pagedItems1.records.length">
+                                            <td colspan="5">
+                                                No Records found!
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <table class="table">
+                                <tfoot>
+                                    <tr ng-show="pagedItems1.recordsTotal>0">
+                                        <td colspan="8">
+                                            <div class="pull-left">
+                                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                                <div style="padding-top:12px;">
+                                                    <span>
+                                                        Show
+                                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="50">50</option>
+                                                            <option value="100">100</option>
+                                                        </select>
+                                                        entries
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="pagination pull-right">
+                                                <ul>
+                                                    <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                                    </li>
+                                                    <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                                        ng-class="{active: n == pagedItems1.currentPage}"
+                                                        ng-click="setPage()">
+                                                        <a href="" ng-bind="n + 1">1</a>
+                                                    </li>
+                                                    <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage-1}">
+                                                        <a href="" ng-click="nextPage()">Next »</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade " id="RevenueModel" tabindex="-1" role="dialog" style="z-index:9999;" aria-labelledby="RevenueDataInfo" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content" style="height:800px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>  <div class="modal-body dashboardTabs">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="campaignLog">
+                            <center>
+                                <h1 style="height:38px;width:350px">REVENUE</h1>
+                            </center>
+                            <br />
+                            <div class="scroll-list">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th >Seller </th>
+                                            
+                                            <th>Plan</th>
+                                            <th >Payment Amount</th>
+                                            <th >Payment Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="t in PaymentData|filter:searchTerm">
+                                            <td>{{t.Name}}</td>
+                                            
+                                            <td>{{t.Plan|PlanName}}</td>
+                                            <td>${{t.Payment}}</td>
+                                            <td>{{t.PayDate}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade " id="YearlyRevenueModel" tabindex="-1" role="dialog" aria-labelledby="YearlyRevenueDataInfo" data-backdrop="static" data-keyboard="false" style="z-index:9000;">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content" style="height:800px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal-body dashboardTabs">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="campaignLog">
+                            <center>
+                                <h1 style="height:38px;width:350px">REVENUE</h1>
+                            </center>
+                            <br />
+                            <div class="scroll-list">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th >Payment Month </th>
+                                            <th >Payment Amount</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in yearlyPaymentData|filter:searchTerm">
+                                            <td class="cusrsorLink" ng-click="LoadYearData(p.MonthNumber)">{{p.PaymentMonth}}</td>
+                                            <td>${{p.PaymentAmount}}</td>
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="adminspinner"></i>
+    @section Scripts {
+        @Scripts.Render("~/bundles/admin/dashboard")
+        <script>
+        function applypromo() {
+            var code = $('#txtpromocode').val();
+            var custmid = $('#hdncustmid').val();
+            var planstatus = $('#hdnplanstatus').val();
+            $('#divError').css("color", "red");
+            if (code == "") {
+                $('#divError').html("Promocode must be entered");
+                $('#txtpromocode').addClass('divPromoError');
+                $('#txtpromocode').focus();
+            } else {
+                $("#promospinner").show();
+                _ajaxApplycoupon(custmid, code);
+            }
+        }
+
+        function _ajaxApplycoupon(custmid, code) {
+            var _url = '@Url.Action("ApplyPromo", "Seller")';
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data: JSON.stringify({ custm_id: custmid, code: code }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (data, status) {
+                    if (status == "success") {
+                        var msg;
+                        if (data == "") {
+                            $('#divError').css("color", "#4caf50");
+                            msg = "Promo code applied and the change will affect the next invoice. Thank you!";
+                        }
+                        else {
+                            msg = data;
+                        }
+                        $('#divError').html(msg);
+                    }
+                    setTimeout(unloader, 100);
+                },
+                error: function (status) {
+                    $('#divError').html("Error! Please try again");
+                    setTimeout(unloader, 100);
+                }
+            });
+        }
+
+        function DownloadActiveUsersCSV() {
+            var hostURL = '@System.Configuration.ConfigurationManager.AppSettings["Hostaddr"].ToString()';
+            window.location.href = hostURL + "/UsersCSV.ashx";
+        }
+
+        function unloader() {
+            $("#promospinner").hide();
+        }
+
+        $('.cusrsorLink').click(function () {
+            $('.cusrsorLink').removeClass('active');
+            $(this).addClass('active')
+        })
+        </script>
+    }

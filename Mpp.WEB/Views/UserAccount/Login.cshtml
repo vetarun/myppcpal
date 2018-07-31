@@ -1,0 +1,54 @@
+﻿@model Mpp.WEB.Models.LoginViewModel
+@using Mpp.WEB.Helpers
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_UserAccount.cshtml";
+}
+<div class="container">
+    <div class="col-md-8 col-md-push-2">
+        <div class="md-box" style="margin-top:100px!important;">
+            <h1>LOGIN</h1>
+            @if (ViewBag.Confirmation == "true")
+            {
+                <div style="text-align:center;font-weight:bold;color:#70bfc2;"><span><img src="~/Content/images/success.png" alt="success" style="padding-right:5px;height:24px;"/>Success, you can login now!</span></div>
+            }
+            else if (ViewBag.Confirmation == "false")
+            {
+                <div style="text-align:center;font-weight:bold;color:#ce6262;"><span><img src="~/Content/images/no-success.png" alt="invalid" style="padding-right:5px;height:24px;"/>Invalid operation, please contact My PPC Pal team</span></div>
+            }
+            @using (Html.BeginForm("Login", "UserAccount", routeValues: new { returnUrl= Request.QueryString["ReturnUrl"] }, method: FormMethod.Post))
+            {
+                @*@Html.ValidationSummary()*@
+                @*@Html.AntiForgeryToken()*@
+                <div class="form-group">
+                    @Html.TextBoxFor(model => model.Email, htmlAttributes: new { @class = "form-control", placeholder = "Email Address" })
+                    @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.PasswordFor(model => model.Password, htmlAttributes: new { @class = "form-control", placeholder = "Password" })
+                    @Html.ValidationMessageFor(model => model.Password, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-block btn-info">Login</button>
+                </div>
+                if (Convert.ToString(TempData["IsValid"]) != "")
+                {
+                <div class="form-group resultmsg text-danger">
+                        <span>@TempData["IsValid"]</span>
+                </div>
+                }
+                @section Scripts {
+                    @Scripts.Render("~/bundles/jqueryval")
+                }
+            }
+        </div>
+        <div class="aLinks">
+            <ul class="list-unstyled">
+                <li>@Html.CustomActionLink("Forgot your password?",Url.Action("Password","UserAccount"), "fa fa-info-circle")</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script> 
+        localStorage.setItem("TrialExpPopUpShown", 0);
+</script>

@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag._TopMenu2 = "active";
+}
+<div ng-controller="AccountCtrl">
+    <div class="commonLayout">
+        <div class="DCFilters clearfix">
+            <input type="text" placeholder="&#xF002; Search Users" class="form-control" ng-model="filterParams.nameSearch" style="height:40px;background:none;font-family:Arial, FontAwesome">
+            <button class="pull-right btn btn-success" data-toggle="modal" data-target="#addAdmin" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> Add User</button>
+        </div>
+        <div class="CLBody">
+            <table class="table tblsorting">
+                <thead>
+                    <tr>
+                        <th ng-class="selectedCls('FirstName')" ng-click="sort_by('FirstName')">Admin Name</th>
+                        <th ng-class="selectedCls('Active')" ng-click="sort_by('Active')">Status</th>
+                        <th ng-class="selectedCls('Email')" ng-click="sort_by('Email')">Email</th>
+                        <th ng-class="selectedCls('UserType')" ng-click="sort_by('UserType')">Type</th>
+                        <th>Block</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr ng-show="filteredItems.length>5">
+                        <td colspan="8" style="border-bottom:0 !important">
+                            <div class="pull-left">
+                                <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems[currentPage].length}} of {{filteredItems.length}} items</span>
+                                <div style="padding-top:12px;text-align:left;">
+                                    <span>
+                                        Show
+                                        <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                        entries
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pagination pull-right">
+                                <ul>
+                                    <li ng-class="{disabled: currentPage == 0}">
+                                        <a href="" ng-click="prevPage()">« Prev</a>
+                                    </li>
+
+                                    <li ng-repeat="n in pagerange(pagedItems.length, currentPage, currentPage + gap) "
+                                        ng-class="{active: n == currentPage}"
+                                        ng-click="setPage()">
+                                        <a href="" ng-bind="n + 1">1</a>
+                                    </li>
+
+                                    <li ng-class="{disabled: (currentPage) == pagedItems.length - 1}">
+                                        <a href="" ng-click="nextPage()">Next »</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr ng-repeat="r in pagedItems[currentPage]">
+                        <td><span class="profileImage" ng-style="getBackgroundColor(r.FirstName)">{{r.FirstName | firstAlphabet | uppercase}}</span>{{r.FirstName | capitalize}} {{r.LastName}}</td>
+                        <td>
+                            <div class="status" ng-if="r.Active == true">
+                                <span class="statusIcon green"></span>
+                            </div>
+                            <div class="status" ng-if="r.Active == false">
+                                <span class="statusIcon red"></span>
+                            </div>
+                        </td>
+                        <td>{{r.Email}}</td>
+                        <td>{{r.UserType==1?'Admin':'Affiliate'}}</td>
+                        <td class="blockOption">
+                            <div class="btnSwitch">
+                                <label><input type="checkbox" id="check{{r.UserID}}" ng-checked="{{r.Active}}" ng-click="UpdateStatus(r.UserID, r.Active)"><span></span></label>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="deleteAdmin" ng-click="RemoveUser(r.UserID)"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr ng-show="!pagedItems[currentPage].length">
+                        <td colspan="5">
+                            No Records found!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addAdmin" id="addAdmin">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content" style="height:600px !important;">
+                <button type="button" class="close"  ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="modal-header clearfix" style="margin-top: 20px; padding-left: 50px;">
+                    <h2 class="modal-title">Add New Admin</h2>
+                </div>
+                <form novalidate name="fmuser" ng-submit="AddUser(User)">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="" style="border:none !important">User Type:</label>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <label class="radio-inline" style="width:75px;">
+                                        <input type="radio" name="payradio" ng-model="User.Type" ng-value="1">Admin
+                                    </label>
+                                    <label class="radio-inline" style="width:85px;">
+                                        <input type="radio" name="payradio" ng-model="User.Type" ng-value="2">Affiliate
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                              
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" placeholder="First Name*" name="txtfrstname" ng-model="User.FirstName" class="form-control" required autofocus>
+                            <span class="error" ng-show="(fmuser.txtfrstname.$dirty || submitted) && fmuser.txtfrstname.$error.required">FirstName required!</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" placeholder="Last name" name="txtlasttname" ng-model="User.LastName" class="form-control">
+                            <span class="error" ng-show="(fmuser.txtlasttname.$dirty || submitted) && fmuser.txtlasttname.$error.required">LastName required!</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" placeholder="Email address*" name="txtemail" ng-model="User.Email" class="form-control" required>
+                            <span class="error" ng-show="(fmuser.txtemail.$dirty|| submitted) && fmuser.txtemail.$error.email">Email ID not valid!</span>
+                            <span class="error" ng-show="(fmuser.txtemail.$dirty || submitted) && fmuser.txtemail.$error.required">Email ID required!</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" placeholder="Password*" name="txtpwd" ng-model="User.Password" class="form-control" required ng-minlength="8">
+                            <span class="error" ng-show="(fmuser.txtpwd.$dirty || submitted) && fmuser.txtpwd.$error.required">Password required!</span>
+                            <span class="error" ng-show="(fmuser.txtpwd.$dirty || submitted) && fmuser.txtpwd.$error.minlength">Password must be 8 char long!</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-info" value="{{submitText}}" />
+                        <button type="button" class="btn btn-default" ng-click="ResetForm()">Cancel</button>
+                        <div class="errormsg" style="color:red;display:none;">{{message}}</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="adminspinner"></i>
+</div>
+@section Scripts {
+@Scripts.Render("~/bundles/admin/account")
+}

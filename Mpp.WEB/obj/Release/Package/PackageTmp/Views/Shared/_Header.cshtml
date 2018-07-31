@@ -1,0 +1,484 @@
+﻿@using Mpp.UTILITIES
+@{
+    var FirstName = "";
+}
+@if (Request.IsAuthenticated)
+{
+    FirstName = HttpContext.Current.User.Identity.Name;
+}
+<header class="mainHeader clearfix">
+    <div class="logo pull-left">
+        <a href="@Url.Action("Dashboard", "Main")"><img src="~/Content/images/logo.png" alt=""></a>
+    </div>
+    <div class="headerRight pull-right">
+        <nav class="mainNav">
+            <ul>
+                <li id="tab_dashboard" class="@ViewBag._TopMenu1">@Html.ActionLink("Dashboard", "Dashboard", "Main", routeValues: null, htmlAttributes: null)</li>
+                <li id="tab_camp" class="@ViewBag._TopMenu2">@Html.ActionLink("My Campaigns", "ViewMyCampaigns", "MyCampaigns", routeValues: null, htmlAttributes: null)</li>
+                <li id="tab_report" class="@ViewBag._TopMenu3">@Html.ActionLink("Reports", "FileIn", "Reports", routeValues: null, htmlAttributes: null)</li>
+                <li id="tab_sett" class="@ViewBag._TopMenu4">@Html.ActionLink("Settings", "Cards", "Settings", routeValues: null, htmlAttributes: null)</li>
+                <li id="tab_help" class="@ViewBag._TopMenu5">@Html.ActionLink("Help", "Instructions", "Help", routeValues: null, htmlAttributes: null)</li>
+
+            </ul>
+        </nav>
+        <div class="accountNav">
+            <ul class="clearfix list-unstyled">
+                <li class="notification">
+                    <a id="tab_notify" href="#" onclick="GetAlerts()">
+                        <i class="fa fa-bell"></i> <span id="idcount"></span>
+                    </a>
+                </li>
+
+                <li class="account">
+                    <a href="javascript:;" class="profileImage dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                    <ul class="dropdown-menu pull-right">
+                        <li id="tab_profile"><a href="@Url.Action("ProfileEmail", "Settings")"><i class="fa fa-pencil"></i> Edit Profile</a></li>
+                        <li><a href="@Url.Action("Logout", "UserAccount")"><i class="fa fa-sign-out"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="modal fade alertDataInfo" tabindex="-1" role="dialog" aria-labelledby="alertDataInfo" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document" style="width:600px;">
+        <div class="modal-content">
+            <button type="button" class="close" aria-label="Close" onclick="Closealerts();"><span aria-hidden="true">×</span></button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="idOptimizeModal">Alerts</h3>
+            </div>
+            <div class="modal-body">
+                <div class="scroll-list">
+                    <table id="tblAlerts" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" onclick="checkAll(this);"></th>
+                                <th>Alert Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr id="shownoalert">
+                                <td colspan="3">
+                                    No Alerts found!
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="clearbtn" style="margin:20px 0 50px;text-align:right;">
+                    <button class="btn-info" type="button" onclick="SelectedCheckbox();">Clear Alerts</button>
+                </div>
+            </div>
+            <div class="header-msg-box" style="display:none;margin-top:-65px">
+                <span id="divalertresponse"></span>
+            </div>
+            <i id="alert-spinner" class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" style="display:none;"></i>
+        </div>
+    </div>
+</div>
+
+<button id="feedbackBtn" class="feedbackBtn" onclick="ClearForm()" data-toggle="modal" data-target="#feedbackModal">Feedback</button>
+
+<div class="modal fade bs-example-modal-sm" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <form id="frmFeedback" name="feedbackForm" enctype="multipart/form-data" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Feedback</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Your Name*</label>
+                        <input class="form-control" placeholder="Name" maxlength="50" name="name" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address*</label>
+                        <input type="email" class="form-control" placeholder="Email" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label>How can we help you?</label>
+                        <textarea class="form-control" placeholder="Describe here.." maxlength="500" name="Content"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Attachment</label>
+                        <input type="file" name="Attachment" />
+                        <label id="lblError" style="color:red"></label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Send</button>
+                    <label id="lblRespo"></label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .feedbackBtn {
+        height: 37px;
+        border: solid 3px white;
+        background: #0297d9;
+        width: 100px;
+        line-height: 32px;
+        -webkit-transform: rotate(-90deg);
+        font-weight: 600;
+        color: white;
+        transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        text-align: center;
+        font-size: 17px;
+        position: fixed;
+        right: -33px;
+        top: 42%;
+        font-family: "Roboto", helvetica, arial, sans-serif;
+        z-index: 999;
+    }
+
+        .feedbackBtn span {
+            display: inline-block;
+            transform: rotate(-90deg);
+        }
+
+    #feedbackModal.modal .modal-content {
+        height: auto;
+    }
+</style>
+
+
+@Scripts.Render("~/bundles/jquery")
+
+<script type="text/javascript">
+
+    //feedback functionallity start
+    $('#frmFeedback').submit(function () {
+        $('#lblRespo,#lblError').text('');
+        $('#btnSubmit').attr('disabled', 'true');
+        event.preventDefault();
+        if (ValidateExtension() && validateEmail(document.getElementsByName('email')[0].value)) {
+            $('#alert-spinner').css('display', 'block');
+            $.ajax({
+                url: "../Home/SendFeedbackEmail",
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    if (data) {
+                        $('#lblRespo').css('color', 'green').text('Thank you for your feedback.');
+                        window.setTimeout(function () {
+                            $('#feedbackModal').modal('hide');
+                            $('#btnSubmit').removeAttr('disabled');
+                            ClearForm();
+                        },2000)
+
+                    }
+                    else {
+                        $('#lblRespo').css('color', 'red').text('Error while sending.Please try again.');
+                        $('#btnSubmit').removeAttr('disabled');
+                    }
+                },
+                error: function () {
+                    $('#lblRespo').css('color', 'red').text('Error while sending.Please try again.');
+                    $('#btnSubmit').removeAttr('disabled');
+                }
+            });
+
+        }
+        else if(!validateEmail(document.getElementsByName('email')[0].value))
+        {
+            $('#lblRespo').css('color', 'red').text("Invalid email address");
+            $('#btnSubmit').removeAttr('disabled');
+        }
+        else  {
+            $('#lblRespo').css('color', 'red').text('Invalid data.');
+            $('#btnSubmit').removeAttr('disabled');
+        }
+        $('#alert-spinner').css('display', 'none');
+
+    });
+
+    function ValidateExtension() {
+        var allowedFiles = [".doc", ".docx", ".pdf", ".png", ".jpg", ".jpeg", ".txt"];
+        var fileUpload = document.getElementsByName("Attachment");
+        var lblError = document.getElementById("lblError");
+        var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
+        if (fileUpload[0].value != "" && !regex.test(fileUpload[0].value.toLowerCase().replace(' ', '').replace('(', '').replace(')', ''))) {
+            lblError.innerHTML = "Please upload files having extensions: <b>" + allowedFiles.join(', ') + "</b> only.";
+            return false;
+        }
+        else if (fileUpload[0].value != "" && fileUpload[0].files[0].size >2097152)
+        {
+            lblError.innerHTML = "Please upload files having size upto 2 MB only.";
+            return false;
+        }
+
+
+        lblError.innerHTML = "";
+        return true;
+    }
+
+    function ClearForm() {
+        $('#frmFeedback').find('input,textarea').val('');
+        $('#lblRespo').text('');
+    }
+    function validateEmail(Email) {
+        
+        if (/^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(Email)) {
+        return true;
+      } else {
+        return false;
+     }
+    }
+    //feedback functionallity end
+
+    var firstName = '@FirstName';
+    var intial = firstName.charAt(0);
+    var profileImage = $('.profileImage').text(intial.toUpperCase());
+    var color = setInitialColor(intial);
+    $('.profileImage').css('background', color);
+    var tick1 = null;
+    var sessionTimeout = @Session.Timeout;
+    //alert(sessionTimeout);
+    var sessionTimeoutWarning = (parseInt(sessionTimeout) - 2); //show alert 2 min before session expire
+    //alert(parseInt(sessionTimeoutWarning));
+    var timeOnPageLoad = new Date();
+    //alert(timeOnPageLoad);
+    var sessionWarningTimer = null;
+    var redirectToWelcomePageTimer = null;
+    //For warning
+    var sessionWarningTimer = setTimeout('SessionWarning()', parseInt(sessionTimeoutWarning) * 60 * 1000);
+
+    var timeForExpiry = null;
+    var minutesForExpiry = null;
+    //Session Warning
+    function SessionWarning() {
+        //minutes left for expiry
+        minutesForExpiry = (parseInt(sessionTimeout) - parseInt(sessionTimeoutWarning));
+        Click();
+    }
+
+
+
+    function Click() {
+        document.getElementById('loader1').style.display = "block";
+        var currentTime = new Date();
+        timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+            parseInt(sessionTimeout));
+        //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+        if (Date.parse(currentTime) < timeForExpiry)
+        {
+            StartThisSessionTimer();
+            return false;
+        }
+        return true;
+    }
+
+    //Session timeout
+    function RedirectToWelcomePage() {
+        //  alert("Session expired. You will be redirected to login page");
+        window.location.href = "../UserAccount/Logout";
+        return false;
+    }
+
+    function RedirectToHomePage() {
+        window.location.href = "https://www.myppcpal.com/";
+        return false;
+    }
+
+    function ClearSessionPopUp() {
+        document.getElementById('loader2').style.display = "block";
+        return true;
+    }
+
+    function ExtendSession() {
+        document.getElementById('loader1').style.display = "none";
+        //*************************
+        //EVEN AFTER CLICKING OK(EXTENDING SESSION) OR CANCEL BUTTON,
+        //IF THE SESSION TIME IS OVER. THEN EXIT THE SESSION.
+        var currentTime = new Date();
+        //TIME FOR EXPIRY
+        timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+            parseInt(sessionTimeout));
+
+        //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+        if (Date.parse(currentTime) > timeForExpiry) {
+            setTimeout('ClearSessionPopUp()', 10);
+        }
+        else {
+            //reset the time on page load
+            clearTimeout(sessionWarningTimer);
+            timeOnPageLoad = new Date();
+            //alert(timeOnPageLoad);
+            sessionWarningTimer = setTimeout('SessionWarning()', parseInt(sessionTimeoutWarning) * 60 * 1000);
+            return true;
+        }
+        return false;
+    }
+
+
+    function CheckTimeOutOver(e) {
+        document.getElementById('loader1').style.display = "none";
+        //*************************
+        e.preventDefault = true;
+        e.stopPropagation();
+        //EVEN AFTER CLICKING OK(EXTENDING SESSION) OR CANCEL BUTTON,
+        //IF THE SESSION TIME IS OVER. THEN EXIT THE SESSION.
+        var currentTime = new Date();
+        //TIME FOR EXPIRY
+        timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+                                parseInt(sessionTimeout));
+        //alert(timeForExpiry);
+        //            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+        if (Date.parse(currentTime) > timeForExpiry) {
+            setTimeout('ClearSessionPopUp()', 10);
+        }
+        else
+        {
+            StartThisSessionTimer();
+            return false;
+        }
+    }
+
+    var timeInSecondsAfterSessionOut = 10;
+    var secondTick = 0;
+    function StartThisSessionTimer() {
+        secondTick++;
+        // alert(secondTick);
+        if (secondTick > timeInSecondsAfterSessionOut) {
+            var currentTime = new Date();
+            //TIME FOR EXPIRY
+            //            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+            if (Date.parse(currentTime) > timeForExpiry) {
+                document.getElementById('loader1').style.display = "none";
+                setTimeout('ClearSessionPopUp()', 10);
+            }
+        }
+        tick1 = setTimeout("StartThisSessionTimer()", 1000);
+    }
+
+    $(function () {
+        var alert_count = '@SessionData.AlertCount';
+        $("body").on('click keypress', function () {
+            if (tick1 != null) {
+                clearTimeout(tick1);
+            }
+            clearTimeout(sessionWarningTimer);
+            timeOnPageLoad = new Date();
+            sessionWarningTimer = setTimeout('SessionWarning()', parseInt(sessionTimeoutWarning) * 60 * 1000);
+            //console.log('on clicked pressed');
+
+        });
+        if(alert_count>0){
+            $('#idcount').addClass('count');
+            $('#idcount').text(alert_count);
+        }
+    });
+
+    function GetAlerts() {
+        var _url = '@Url.Action("GetAlerts", "Main")';
+        $('#tblAlerts tbody').empty(); // Clears the data
+        $('#alert-spinner').css('display','block');
+        $.ajax({
+            type: 'GET',
+            url: _url,
+            success: function(data){
+                if(data){
+                    var len = data.length;
+                    var txt = "";
+                    if(len > 0){
+                        for(var i=0;i<len;i++){
+                            if(data[i].AlertID){
+                                txt += "<tr><td><input type='checkbox' id='chckalert_"+[i]+"' value='"+data[i].AlertID+"'</td><td>"+data[i].AlertDate+"</td><td>"+data[i].Description+"</td></tr>";
+                            }
+                        }
+                        if(txt != ""){
+                            $('#shownoalert').css('display','none');
+                            $("#tblAlerts tbody").append(txt);
+                        }
+                    }else{
+                        $('#shownoalert').css('display','table-row');
+                    }
+                    $('.alertDataInfo').modal('show');
+                    $('#alert-spinner').css('display','none');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert('error: ' + textStatus + ': ' + errorThrown);
+                $('#alert-spinner').css('display','none');
+            }
+        });
+        return false;//suppress natural form submission
+    };
+
+    function Closealerts(){
+        $('.alertDataInfo').modal('hide');
+        $('#divalertresponse').text("");
+        $('.header-msg-box').css("display", "none");
+    }
+
+    function SelectedCheckbox(){
+        var checked = '';
+        var FldAlertID = [];
+        $('#tblAlerts').each(function () {
+            var tolalChecked = $(this).find('input[type=checkbox]').length;
+
+            for (var i = 0; i < tolalChecked - 1; i++) {
+                var IsChkbox = $('#chckalert_' + i).is(':checked');
+                if (IsChkbox == true) {
+                    FldAlertID[i] = document.getElementById('chckalert_' + i).value;
+                }
+            }
+        });
+
+        if (FldAlertID.length > 0) {
+            $('#alert-spinner').css('display','block');
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify({ 'alerts': FldAlertID }),
+                url: '@Url.Action("ClearAlerts", "Main")',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(data){
+                    if(data == ''){
+                        $('.header-msg-box').css("display", "block");
+                        $('#divalertresponse').text("Deleted successfully!");
+                        GetAlerts();
+                        setTimeout(function () { $('.header-msg-box').fadeOut();}, 2000);
+                    }
+                    $('#alert-spinner').css('display','none');
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    document.getElementById('divalertresponse').innerHTML = 'error: ' + textStatus + ': ' + errorThrown;
+                    $('#alert-spinner').css('display','none');
+                }
+            });
+        }
+        else {
+            alert("Please select atleast one alert to clear.");
+            return false;
+        }
+    }
+
+    function checkAll(bx) {
+        $('#tblAlerts').each(function () {
+            var tolalChecked = $(this).find('input[type=checkbox]').length;
+            for (var i = 0; i < tolalChecked - 1; i++) {
+                document.getElementById('chckalert_' + i).checked = bx.checked;
+            }
+        });
+    }
+
+    //$('.modal').on('show.bs.modal', function () {
+    //    $('.modal .tbl-modal').css('overflow-y', 'auto');
+    //    $('.modal .modal-body').css('min-height', $(window).height() * 0.75);
+    //    $('.modal .tbl-modal').css('height', '450px');
+    //    $('.modal .modal-dialog').css('max-width', $(window).width() * 1);
+    //}); // Replaced with scroll-list css in app.css file
+</script>

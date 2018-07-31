@@ -1,0 +1,10 @@
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\bin\Debug\Mpp.DATABASE.exe.config
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\bin\Debug\Mpp.DATABASE.exe
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\bin\Debug\Mpp.DATABASE.pdb
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\bin\Debug\DbUp.dll
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\bin\Debug\DbUp.xml
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\obj\Debug\Mpp.DATABASE.csprojResolveAssemblyReference.cache
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\obj\Debug\Mpp.DATABASE.csproj.CoreCompileInputs.cache
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\obj\Debug\Mpp.DATABASE.csproj.CopyComplete
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\obj\Debug\Mpp.DATABASE.exe
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.DATABASE\obj\Debug\Mpp.DATABASE.pdb

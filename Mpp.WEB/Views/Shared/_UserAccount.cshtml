@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+
+</head>
+<body class="darkBg">
+    <div class="mainContainer">
+        <header class="mainHeader clearfix">
+            <div class="logo pull-left">
+                <a href="@Url.Action("Login","UserAccount")"><img src="~/Content/images/logo.png" alt=""></a>
+            </div>
+            <div class="headerRight pull-right">
+                <nav class="mainNav">
+                    <ul>
+                        @*<li><a href="">MyPPCPal</a></li>
+                        <li><a href="">Features</a></li>
+                        <li>@Html.ActionLink("FAQ", "Questions", "Home")</li>*@
+                        @*<li>@Html.ActionLink("Login", "Login", "UserAccount")</li>*@
+                    </ul>
+                </nav>
+                @*@Html.ActionLink("Start My Free Trial", "Register", "UserAccount", routeValues: null, htmlAttributes: new { @class = "trialBtn" })*@
+            </div>
+        </header>
+        <div class="mainContent">
+            @RenderBody()
+        </div>
+        <footer class="mainFooter clearfix">
+            <div class="logoFooter pull-left"><a href=""><img src="~/Content/images/logo-footer.jpg" alt=""></a></div>
+            <nav class="footerNav pull-right">
+                <ul class="list-unstyled">
+                    <li>Copyright © @DateTime.Now.Year, MyPPCPal</li>
+                    <li><a href="@Url.Action("Policy","UserAccount")">Privacy Policy</a></li>
+                    <li><a href="@Url.Action("Terms","UserAccount")">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+

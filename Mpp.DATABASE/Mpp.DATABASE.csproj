@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{399F53FB-C74D-4EB3-B8F8-6A818F96D517}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mpp.DATABASE</RootNamespace>
+    <AssemblyName>Mpp.DATABASE</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DbUp, Version=3.3.5.0, Culture=neutral, PublicKeyToken=4b419c53bdfd4cbf, processorArchitecture=MSIL">
+      <HintPath>..\packages\dbup.3.3.5\lib\net35\DbUp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\Triggers\" />
+    <Folder Include="Scripts\Views\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Schema0001-OldColumns.sql" />
+    <EmbeddedResource Include="Scripts\Schema0002-AddMppUserColumns.sql" />
+    <EmbeddedResource Include="Scripts\Schema0003-AddMppUserAPIColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Functions\FN0001-fGetListOfDates.sql" />
+    <EmbeddedResource Include="Scripts\Schema0004-RecordType.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0010-Sbsp_SetReportDates.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Functions\FN0002-GetRequestCount.sql" />
+    <EmbeddedResource Include="Scripts\Schema0005-newColumnInKeywordsTable.sql" />
+    <EmbeddedResource Include="Scripts\Schema0007-PopUpAlert.sql" />
+    <EmbeddedResource Include="Scripts\Schema0008-PopUp.sql" />
+    <EmbeddedResource Include="Scripts\Schema0009-newColumnIOptimizeKeyLog.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0015-Sbsp_GetMPPClients.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0017-Sbsp_UpdateCampaigns.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0019-Ssp_UpdatePaymentStatus.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0020-Sbsp_GetUserPlan.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0021-Sbsp_UpdateAllCampaignsStatus.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0022-Sbsp_GetOptimizeKeyLog.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0023-Sbsp_RevertKeyUpdates.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0024-Ssp_GetUpdatedData.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0025-Sbsp_GetUserSku.sql" />
+    <EmbeddedResource Include="Scripts\Schema0005-newColumns.sql" />
+    <EmbeddedResource Include="Scripts\Schema0006-skuCountColumnInCampaigns.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0012_Sbsp_GetAdminDashboard.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0013-Sbsp_UpdateSkuCount.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0014-Sbsp_UpdateInventoryStatus.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0016-Sbsp_DeleteArchiveData.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0011-Sbsp_UpdateSearchtermInventory.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0001-Sbsp_GetAffiliateCodes.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0002-Sbsp_GetUserReportData.sql" />
+    <EmbeddedResource Include="Scripts\Schema0005-AddRefreshColoumns.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0004-Sbsp_UpdateProductInventory.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0003-Sbsp_GetReportLog.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0005-Sbsp_ArchiveUserData.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0006-Sbsp_getCampaigns.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0007-Sbsp_GetDashboardData.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0008-Sbsp_GetUserReportDates.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0009-Sbsp_ReportManagement.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0026-Sbsp_CreateOptimizeLogReport.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0027-Sbsp_GetOptimizedKeysToUpdateOnAmz.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0028-Sbsp_SnapShotManagement.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Schema0010-AddIncludeSku.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0029-Sbsp_UpdateMyCampaignStatus.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0030-Sbsp_UpdateAllCampaignsStatus.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Schema0011-TempSKUCheck.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0032-Sbsp_UpdateKeywords.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Schema0012-AddIsLocallyProcessed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0032-Sbsp_UpdateAds.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0034-Sbsp_GetAffiliateReportDetails.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0035-Sbsp_GetOptimizeSearchTermsAndFormula.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0036-Sbsp_GetOptimizeKeywordsAndFormula.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Schema0013-BestSearchTermRequestTable.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0041-Sbsp_GetFormulaForCamp.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0039-Sbsp_GetBestSrchTermCampaignsToCreate.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0040-Sbsp_UpdateBestSrchTerm.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0038-Sbsp_CampPerformance.sql" />
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0037-Sbsp_UpdateFormulaForCamp.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\StoredProcedures\SP0042-Sbsp_UpdateSellerProfile.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

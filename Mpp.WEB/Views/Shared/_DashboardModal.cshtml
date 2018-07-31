@@ -1,0 +1,420 @@
+﻿<div class="modal fade moreDataInfo" tabindex="-1" role="dialog" aria-labelledby="moreDataInfo">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" ng-click="Close()"  aria-label="Close"><span aria-hidden="true">×</span></button>
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Performance by Campaigns {{DataFrom}}</h4>
+                <div class="pull-right dateRangeOption">
+                    <input type="text" placeholder="&#xF002; Search Campaigns" class="form-control searchbox" ng-model="filterParams.nameSearch" ng-blur="filter_by()">
+                    <div class="customDateOption" style="display:none;" id="divcustomcamp">
+                        <input type="text" placeholder="From" class="form-control" datepicker-popup="MM/yyyy" is-open="opened" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" datepicker  ng-model="c_startdate" id="txtcampfrom" readonly>
+                        <input type="text" placeholder="To" class="form-control" datepicker ng-model="c_enddate" id="txtcampto" readonly>
+                        <button type="submit" class="btn btn-info" ng-click="LoadCustomData()">Submit</button>
+                    </div>
+                    <select class="form-control selectDate pull-right" style="width: auto;" ng-model="Range" ng-change="GetDataByRange(Range)">
+                        <option value="7">7 Days</option>
+                        <option value="30">30 Days</option>
+                        <option value="60">60 Days</option>
+                        <option value="90">90 Days</option>
+                        <option value="0">Year to Date</option>
+                        <option value="1">Custom</option>
+                    </select>
+                    <div id="divcamperror" class="text-danger" style="width:380px;"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="scroll-list">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th ng-class="selectedCls('CampaignName')" ng-click="sort_by('CampaignName')">Campaign</th>
+                                <th ng-class="selectedCls('ACoS')" ng-click="sort_by('ACoS')">ACoS</th>
+                                <th ng-class="selectedCls('Spend')" ng-click="sort_by('Spend')">Spend</th>
+                                <th ng-class="selectedCls('Sales')" ng-click="sort_by('Sales')">Sales</th>
+                                <th ng-class="selectedCls('Impressions')" ng-click="sort_by('Impressions')">Impressions</th>
+                                <th ng-class="selectedCls('Clicks')" ng-click="sort_by('Clicks')">Clicks</th>
+                                <th ng-class="selectedCls('CTR')" ng-click="sort_by('CTR')">CTR</th>
+                                <th ng-class="selectedCls('CostPerClick')" ng-click="sort_by('CostPerClick')">CPC</th>
+                            </tr>
+                        </thead>
+
+                        @*<pre>pagedItems.length: {{pagedItems.length|json}}</pre>
+                <pre>currentPage: {{currentPage|json}}</pre>
+                <pre>currentPage: {{sort|json}}</pre>*@
+                        <tbody>
+                            <tr ng-repeat="r in pagedItems1.records">
+                                <td>{{r.CampaignName}}</td>
+                                <td>{{r.ACoS}}%</td>
+                                <td>{{r.Spend | currency}}</td>
+                                <td>{{r.Sales | currency}}</td>
+                                <td>{{r.Impressions}}</td>
+                                <td>{{r.Clicks}}</td>
+                                <td>{{r.CTR}}%</td>
+                                <td>{{r.CostPerClick | currency}}</td>
+                            </tr>
+                            <tr ng-show="showmsg1">
+                                <td colspan="8">
+                                    No Records found!
+                                </td>
+                            </tr>
+                            <tr ng-show="showdata" style="background-color: #f2f5f7;">
+                                <td colspan="8">
+                                    {{ShowDataOn}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table">
+                        <tfoot>
+                            <tr ng-show="pagedItems1.recordsTotal>0">
+                                <td colspan="8">
+                                    <div class="pull-left">
+                                        <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                        <div style="padding-top:12px;">
+                                            <span>
+                                                Show
+                                                <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                    <option value="10">10</option>
+                                                    <option value="20">20</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                                entries
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="pagination pull-right">
+                                        <ul>
+                                            <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                                <a href="" ng-click="prevPage()">« Prev</a>
+                                            </li>
+                                            <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                                ng-class="{active: n == pagedItems1.currentPage}"
+                                                ng-click="setPage()">
+                                                <a href="" ng-bind="n + 1">1</a>
+                                            </li>
+                                            <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+                                                <a href="" ng-click="nextPage()">Next »</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade keylogDataInfo" tabindex="-1" role="dialog" aria-labelledby="logDataInfo" data-backdrop="static" data-keyboard="false" style="z-index:10000;">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+			<div class="modal-header">
+				<center>
+					<h4>Keyword Log</h4>
+					<span>Campaign: {{cname}}</span>
+				</center>
+				<input type="text" placeholder="&#xF002; Search Keywords" class="form-control searchbox" ng-model="filterParams.nameSearch" ng-blur="filter_by()">
+
+			</div>
+
+			<div class="modal-body">
+				<div class="scroll-list" style="height:420px">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th data-sortable="true">Modified On</th>
+								<th data-sortable="true">Keyword</th>
+								<th data-sortable="true">Ad Group</th>
+								<th data-sortable="true">Modified Field</th>
+								<th data-sortable="true">Old Value</th>
+								<th data-sortable="true">New Value</th>
+								<th data-sortable="true">Match Type </th>
+								<th data-sortable="true">Reason</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="r in pagedItems1.records">
+								<td>{{r.ModifiedOn}}</td>
+								<td>{{r.KeywordName}}</td>
+								<td>{{r.AdGroupName}}</td>
+								<td>{{r.ModifiedField}}</td>
+								<td>{{r.OldValue}}</td>
+								<td>{{r.NewValue}}</td>
+								<td>{{r.MatchType}}</td>
+								<td>{{r.Reason}}</td>
+							</tr>
+							<tr ng-show="!pagedItems1.records.length">
+								<td colspan="9">
+									No Records found!
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					<table class="table">
+						<tfoot>
+							<tr ng-show="pagedItems1.recordsTotal>0">
+								<td colspan="8">
+									<div class="pull-left">
+										<span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+										<div style="padding-top:12px;">
+											<span>
+												Show
+												<select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+													<option value="10">10</option>
+													<option value="20">20</option>
+													<option value="50">50</option>
+													<option value="100">100</option>
+												</select>
+												entries
+											</span>
+										</div>
+									</div>
+									<div class="pagination pull-right">
+										<ul>
+											<li ng-class="{disabled: pagedItems1.currentPage == 0}">
+												<a href="" ng-click="prevPage()">« Prev</a>
+											</li>
+											<li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+												ng-class="{active: n == pagedItems1.currentPage}"
+												ng-click="setPage()">
+												<a href="" ng-bind="n + 1">1</a>
+											</li>
+											<li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+												<a href="" ng-click="nextPage()">Next »</a>
+											</li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade moreDataKeyInfo" tabindex="-1" role="dialog" aria-labelledby="moreDataInfo">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Performance by Keywords {{DataFrom}}</h4>
+                <div class="pull-right dateRangeOption">
+                    <input type="text" placeholder="&#xF002; Search Keywords" class="form-control searchbox" ng-model="filterParams.nameSearch" ng-blur="filter_by()">
+                    <div class="customDateOption" style="display:none;" id="divcustomkey">
+                        <input type="text" placeholder="From" class="form-control" datepicker ng-model="k_startdate" id="txtkeyfrom" readonly>
+                        <input type="text" placeholder="To" class="form-control" datepicker ng-model="k_enddate" id="txtkeyto" readonly>
+                        <button type="submit" class="btn btn-info" ng-click="LoadCustomData()">Submit</button>
+                    </div>
+                    <select class="form-control selectDate pull-right" style="width: auto;" ng-model="Range" ng-change="GetDataByRange(Range)">
+                        <option value="7">7 Days</option>
+                        <option value="30">30 Days</option>
+                        <option value="60">60 Days</option>
+                        <option value="90">90 Days</option>
+                        <option value="0">Year to Date</option>
+                        <option value="1">Custom</option>
+                    </select>
+                    <div id="divkeyerror" class="text-danger" style="width:380px;"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="scroll-list">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th ng-class="selectedCls('KeywordName')" ng-click="sort_by('KeywordName')">Keyword</th>
+                                <th ng-class="selectedCls('CampaignName')" ng-click="sort_by('CampaignName')">Campaign</th>  
+                                <th ng-class="selectedCls('AdGroupName')" ng-click="sort_by('AdGroupName')">Ad Group</th>
+                                <th ng-class="selectedCls('ACoS')" ng-click="sort_by('ACoS')">ACoS</th>
+                                <th ng-class="selectedCls('Spend')" ng-click="sort_by('Spend')">Spend</th>
+                                <th ng-class="selectedCls('Sales')" ng-click="sort_by('Sales')">Sales</th>
+                                <th ng-class="selectedCls('Impressions')" ng-click="sort_by('Impressions')">Impressions</th>
+                                <th ng-class="selectedCls('Clicks')" ng-click="sort_by('Clicks')">Clicks</th>
+                                <th ng-class="selectedCls('CTR')" ng-click="sort_by('CTR')">CTR</th>
+                                <th ng-class="selectedCls('CostPerClick')" ng-click="sort_by('CostPerClick')">CPC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="r in pagedItems1.records">
+                                <td>{{r.KeywordName}}</td>
+                                <td>{{r.CampaignName}}</td>
+                                <td>{{r.AdGroupName}}</td>
+                                <td>{{r.ACoS}}%</td>
+                                <td>{{r.Spend | currency}}</td>
+                                <td>{{r.Sales | currency}}</td>
+                                <td>{{r.Impressions}}</td>
+                                <td>{{r.Clicks}}</td>
+                                <td>{{r.CTR}}%</td>
+                                <td>{{r.CostPerClick | currency}}</td>
+                            </tr>
+                            <tr ng-show="showmsg1">
+                                <td colspan="10">
+                                    No Records found!
+                                </td>
+                            </tr>
+                            <tr ng-show="showdata" style="background-color: #f2f5f7;">
+                                <td colspan="10">
+                                    {{ShowDataOn}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table">
+                    <tfoot>
+                        <tr ng-show="pagedItems1.recordsTotal>0">
+                            <td colspan="9">
+                                <div class="pull-left">
+                                    <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                    <div style="padding-top:12px;">
+                                        <span>
+                                            Show
+                                            <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                            entries
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="pagination pull-right">
+                                    <ul>
+                                        <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                            <a href="" ng-click="prevPage()">« Prev</a>
+                                        </li>
+                                        <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                            ng-class="{active: n == pagedItems1.currentPage}"
+                                            ng-click="setPage()">
+                                            <a href="" ng-bind="n + 1">1</a>
+                                        </li>
+                                        <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+                                            <a href="" ng-click="nextPage()">Next »</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade moreDataAdInfo" tabindex="-1" role="dialog" aria-labelledby="moreDataInfo">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" ng-click="Close()" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Performance by AdGroups {{DataFrom}}</h4>
+                <div class="pull-right dateRangeOption">
+                    <input type="text" placeholder="&#xF002; Search AdGroups" class="form-control searchbox" ng-model="filterParams.nameSearch" ng-blur="filter_by()">
+                    <div class="customDateOption" style="display:none;" id="divcustomad">
+                        <input type="text" placeholder="From" class="form-control" datepicker ng-model="a_startdate" id="txtadfrom" readonly>
+                        <input type="text" placeholder="To" class="form-control" datepicker ng-model="a_enddate" id="txtadto" readonly>
+                        <button type="submit" class="btn btn-info" ng-click="LoadCustomData()">Submit</button>
+                    </div>
+                    <select class="form-control selectDate pull-right" style="width: auto;" ng-model="Range" ng-change="GetDataByRange(Range)">
+                        <option value="7">7 Days</option>
+                        <option value="30">30 Days</option>
+                        <option value="60">60 Days</option>
+                        <option value="90">90 Days</option>
+                        <option value="0">Year to Date</option>
+                        <option value="1">Custom</option>
+                    </select>
+                    <div id="divaderror" class="text-danger" style="width:380px;"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="scroll-list">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th ng-class="selectedCls('AdGroupName')" ng-click="sort_by('AdGroupName')">Ad Group</th>
+                                <th ng-class="selectedCls('Campaign')" ng-click="sort_by('Campaign')">Campaign</th>
+                                <th ng-class="selectedCls('ACoS')" ng-click="sort_by('ACoS')">ACoS</th>
+                                <th ng-class="selectedCls('Spend')" ng-click="sort_by('Spend')">Spend</th>
+                                <th ng-class="selectedCls('Sales')" ng-click="sort_by('Sales')">Sales</th>
+                                <th ng-class="selectedCls('Impressions')" ng-click="sort_by('Impressions')">Impressions</th>
+                                <th ng-class="selectedCls('Clicks')" ng-click="sort_by('Clicks')">Clicks</th>
+                                <th ng-class="selectedCls('CTR')" ng-click="sort_by('CTR')">CTR</th>
+                                <th ng-class="selectedCls('CostPerClick')" ng-click="sort_by('CostPerClick')">CPC</th>
+                            </tr>
+                        </thead>
+
+                        @*<pre>pagedItems.length: {{pagedItems1.lastpage}}</pre>
+                            <pre>currentPage: {{pagedItems1.currentPage}}</pre>*@
+                        <tbody>
+                            <tr ng-repeat="r in pagedItems1.records">
+                                <td>{{r.AdGroupName}}</td>
+                                <td>{{r.Campaign}}</td>
+                                <td>{{r.ACoS}}%</td>
+                                <td>{{r.Spend | currency}}</td>
+                                <td>{{r.Sales | currency}}</td>
+                                <td>{{r.Impressions}}</td>
+                                <td>{{r.Clicks}}</td>
+                                <td>{{r.CTR}}%</td>
+                                <td>{{r.CostPerClick | currency}}</td>
+                            </tr>
+                            <tr ng-show="showmsg1">
+                                <td colspan="9">
+                                    No Records found!
+                                </td>
+                            </tr>
+                            <tr ng-show="showdata" style="background-color: #f2f5f7;">
+                                <td colspan="9">
+                                    {{ShowDataOn}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table">
+                    <tfoot>
+                        <tr ng-show="pagedItems1.recordsTotal>0">
+                            <td colspan="9">
+                                <div class="pull-left">
+                                    <span>Showing {{Options.start + 1}} to {{Options.start + pagedItems1.records.length}} of {{pagedItems1.recordsTotal}} items</span>
+                                    <div style="padding-top:12px;">
+                                        <span>
+                                            Show
+                                            <select class="" style="width:auto;" ng-model="Options.length" ng-change="GetDataBySize()">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                            entries
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="pagination pull-right">
+                                    <ul>
+                                        <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                            <a href="" ng-click="prevPage()">« Prev</a>
+                                        </li>
+                                        <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                            ng-class="{active: n == pagedItems1.currentPage}"
+                                            ng-click="setPage()">
+                                            <a href="" ng-bind="n + 1">1</a>
+                                        </li>
+                                        <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+                                            <a href="" ng-click="nextPage()">Next »</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="modalspinner" style="top:500px !important;"></i>

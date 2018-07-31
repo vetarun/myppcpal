@@ -1,0 +1,11 @@
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'IsLocallyProcessed' AND ObJECT_ID = OBJECT_ID('Reports'))
+BEGIN
+	ALTER TABLE Reports
+		ADD IsLocallyProcessed INT NOT NULL DEFAULT(0)
+END
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'IsLocallyProcessedSearchTerm' AND ObJECT_ID = OBJECT_ID('Reports'))
+BEGIN
+	ALTER TABLE Reports
+		ADD IsLocallyProcessedSearchTerm INT NOT NULL DEFAULT(0)
+END

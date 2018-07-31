@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Mpp.WEB.Models.StatementViewModel>
+@{
+    ViewBag.Title = "Billing";
+    ViewBag._NavBilling = "active";
+    Layout = "~/Views/Shared/_Settings.cshtml";
+}
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation">@Html.ActionLink("Cards", "Cards", routeValues: null)</li>
+    <li role="presentation" class="active">@Html.ActionLink("Statements", "Statements", routeValues: null)</li>
+</ul>
+
+<div class="tab-content">
+    <div>
+        <div class="contentBox">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Plan</th>
+                        <th>Price Charged</th>
+                        <th>Pay Period</th>
+                        <th>Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div>@item.Date</div>
+                                </td>
+                                <td>
+                                    <div>@item.Description</div>
+                                </td>
+                                <td>
+                                    <div>$@item.Price</div>
+                                </td>
+                                <td>
+                                    <div>@item.Period</div>
+                                </td>
+                                <td>
+                                    <div>@Html.ActionLink("Download", "Invoice","Settings",new { invoiceId=item.Id},new {@class="btn btn-default" })</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                   
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        @*GetStatements('@Session["StripeCardId"]');*@
+    });
+
+    function GetStatements(cardId)
+    {
+        $.ajax({
+            url: 'https://dashboard.stripe.com/v1/',
+            dataType: "jsonp",
+            type: "POST",          
+            contentType: 'application/json; charset=utf-8',
+            jsonp: "charges=" + cardId,
+            headers: {
+                Authorization: '' //token
+            },
+            success: function (data) {
+                (data);
+            },
+            error: function (xhr) {
+                (xhr.error)
+            }
+        });
+    }  
+</script>

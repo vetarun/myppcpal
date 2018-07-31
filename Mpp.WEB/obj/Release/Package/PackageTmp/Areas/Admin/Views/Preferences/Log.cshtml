@@ -1,0 +1,145 @@
+﻿
+@{
+    ViewBag.Title = "Log";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag._TopMenu4 = "active";
+    ViewBag.LogCls = "active";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .ui-autocomplete {
+        max-height: 100px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+
+    .ui-menu {
+        width: 240px !important;
+    }
+</style>
+<div class="settingContainer withSiderbar clearfix" ng-controller="SystemlogController as ctrl">
+    @Html.Partial("_Settingspartial")
+    <div class="contentRight" style="padding-left: 222px !important">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="filters">
+                    <label>Type</label>
+                    <select id="SelectedName" class="form-control" style="width:210px" name="" ng-model="filterParam.Type" ng-change="ResetPageOptions();LoadLogData();valaidateDatesFilter();">
+                        <option value="1">Reports Log</option>
+                        <option value="2">Email Log</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="filters">
+                    <label>Client</label>
+                    @*<select id="SelectedName" name="" ng-model="filterParam.Client" ng-options="c.Id as c.Name for c in clients"></select>*@
+                    <input id="srchClient" class="form-control" placeholder="Select Client" style="height:38px;width:240px">
+                </div>
+            </div>
+            <div class="col-md-2">
+
+                <div class="filters" style="width:168px;" ng-hide="filterParam.Type==2">
+                    <label>
+                        From
+                    </label>
+                    <input type="text" placeholder="From" ng-hide="filterParam.Type==2" ng-change="OnDateChangeLoadLogData()" style="height:39px;background-color: white;" class="form-control filters" datepicker-popup="MM/yyyy" is-open="opened" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" datepicker ng-model="PageOptions.Date" id="txtlogDate" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filters" style="width:168px;" ng-hide="filterParam.Type==2">
+                    <label>
+                        To
+                    </label>
+                    <input type="text" placeholder="To" ng-change="OnDateChangeLoadLogData()" style="height:39px;background-color: white;" class="form-control filters" datepicker-popup="MM/yyyy" is-open="opened" datepicker-options="{minMode: 'month'}" datepicker-mode="'month'" datepicker ng-model="PageOptions.Date2" id="txtlogDate2" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <span id="dateError"l style="color:red;display:none;margin-top:44px;">Select valid date range.</span>
+            </div>
+        </div>
+        <div class="DCContent">
+            <div class="DCCTable">
+                <table class="table tblsorting">
+                    <thead>
+                        <tr ng-if="filterParam.Type==1">
+                            <th ng-class="selectedCls('Name')" ng-click="sort_by('Name')">Client</th>
+                            <th ng-class="selectedCls('RecordName')" ng-click="sort_by('RecordName')">Report Type</th>
+                            <th ng-class="selectedCls('ReportDate')" ng-click="sort_by('ReportDate')"> Report Date</th>
+                            <th ng-class="selectedCls('OptimizeDate')" ng-click="sort_by('OptimizeDate')">Optimize Date</th>
+                            <th ng-class="selectedCls('RefStatusCount')" ng-click="sort_by('RefStatusCount')">Refresh Count</th>
+                            <th ng-class="selectedCls('ReportStatus')" ng-click="sort_by('ReportStatus')">Report Status</th>
+                            <th ng-class="selectedCls('RefreshStatus')" ng-click="sort_by('RefreshStatus')">Refresh Status</th>
+                            <th ng-class="selectedCls('UpdtBidStatus')" ng-click="sort_by('UpdtBidStatus')">Update Bid Status</th>
+                            <th ng-class="selectedCls('UpdtNegStatus')" ng-click="sort_by('UpdtNegStatus')">Update Neg Status</th>
+                            <th ng-class="selectedCls('ReportReqDate')" ng-click="sort_by('ReportReqDate')">RequestDate</th>
+                        </tr>
+                        <tr ng-if="filterParam.Type==2">
+                            <th ng-class="selectedCls('Name')" ng-click="sort_by('Name')">Client</th>
+                            <th ng-class="selectedCls('DataImportAlert')" ng-click="sort_by('DataImportAlert')">Data Import</th>
+                            <th ng-class="selectedCls('AccessLimitAlert')" ng-click="sort_by('AccessLimitAlert')">Access Limit</th>
+                            <th ng-class="selectedCls('SevenDayTrialAlert')" ng-click="sort_by('SevenDayTrialAlert')">SevenDay Trial</th>
+                            <th ng-class="selectedCls('TrialEndAlert')" ng-click="sort_by('TrialEndAlert')">Trial End</th>
+                            <th ng-class="selectedCls('ActivationEmailAlert')" ng-click="sort_by('ActivationEmailAlert')">Activation Email</th>
+                            <th ng-class="selectedCls('PayAlert')" ng-click="sort_by('PayAlert')">PaymentAlert</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="row in logTableData.Data">
+                            <td ng-repeat="th in logTableData.Headers">
+                                {{row[th.Key]}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" ng-hide="logTableData.Total>0">
+                                No Records Found.
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr ng-show="logTableData.Total>5">
+                            <td colspan="8" style="border-bottom:0 !important">
+                                <div class="pull-left" style="padding:15px;">
+                                    @*<span>Showing {{((PageOptions.start-1)*PageOptions.Length)+1}} to {{PageOptions.start*PageOptions.Length}} of {{logTableData.Total}} items</span>*@
+                                    <div style="padding-top:12px;text-align:left!important">
+                                        <span>
+                                            Show
+                                            <select class="" style="width:auto;" ng-model="PageOptions.Length" ng-change="LoadLogData()">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                            entries
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="pagination pull-right">
+                                    <ul>
+                                        <li ng-class="{disabled: pagedItems1.currentPage == 0}">
+                                            <a href="" ng-click="prevPage()">« Prev</a>
+                                        </li>
+                                        <li ng-repeat="n in pagerange(pagedItems1.lastpage, pagedItems1.currentPage, pagedItems1.currentPage + gap) "
+                                            ng-class="{active: n == pagedItems1.currentPage}"
+                                            ng-click="setPage()">
+                                            <a href="" ng-bind="n + 1">1</a>
+                                        </li>
+                                        <li ng-class="{disabled: (pagedItems1.currentPage) == pagedItems1.lastpage}">
+                                            <a href="" ng-click="nextPage()">Next »</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<i class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" ng-show="adminspinner"></i>
+@section Scripts {
+    @Scripts.Render("~/bundles/admin/preferences")
+}

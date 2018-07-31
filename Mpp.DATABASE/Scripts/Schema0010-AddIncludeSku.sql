@@ -1,0 +1,7 @@
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'IncludeSku' AND ObJECT_ID = OBJECT_ID('Campaigns'))
+BEGIN
+	ALTER TABLE Campaigns
+		ADD IncludeSku bit NOT NULL DEFAULT(0)
+END
+GO

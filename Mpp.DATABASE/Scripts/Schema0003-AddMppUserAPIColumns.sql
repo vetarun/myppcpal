@@ -1,0 +1,60 @@
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'AccessToken' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD AccessToken varchar(max)
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'RefreshToken' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD RefreshToken varchar(max)
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'TokenType' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD TokenType varchar(20)
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'AccessTokenUpdatedOn' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD AccessTokenUpdatedOn datetime
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'TokenExpiresIn' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD TokenExpiresIn int NOT NULL  default(0)
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'sellerStringId' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD sellerStringId varchar(100) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'ProfileId' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD ProfileId varchar(100) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'ProfileAccess' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER TABLE MppUser
+		ADD ProfileAccess int NOT NULL default(0)
+END
+GO
+IF NOT EXISTS(SELECT * FROM SYS.COLUMNS WHERE Name = N'PlanUpdatedOn' AND ObJECT_ID = OBJECT_ID('MppUser'))
+BEGIN
+	ALTER Table MppUser ADD PlanUpdatedOn datetime default null
+END
+GO

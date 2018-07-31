@@ -1,0 +1,152 @@
+﻿
+@{
+    ViewBag.Title = "Billing";
+    ViewBag._NavBilling = "active";
+    Layout = "~/Views/Shared/_Settings.cshtml";
+    var TrailEndDate = (DateTime)ViewBag._TrailEnd;
+    var Today = DateTime.Now;
+    var IsCardAdded = (bool)ViewBag.IsCardAdded;
+}
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">@Html.ActionLink("Cards", "Cards", routeValues: null)</li>
+    <li role="presentation" id="tab_stmnt">@Html.ActionLink("Statements", "Statements", routeValues: null)</li>
+</ul>
+<div class="tab-content">
+    <div>
+        <div class="row">
+            <div class="col-md-4" style="height:55px;background-color:azure;margin-bottom:10px;padding:5px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        Number:<br />XXXX-XXXX-XXXX-<label id="lastDigits"></label>
+                    </div>
+                    <div class="col-md-3">Expiry:<label id="expiry"></label></div>
+                    <div class="col-md-3">Brand:<label id="brand"></label></div>
+                </div>      
+            </div>
+        </div>
+        <div class="cardList">
+            <div class="addCard" id="addCard">
+                <a href="javascript:;" id="btnSubscribePayment">
+                    <div>
+                        <p><i class="fa fa-plus"></i></p>
+                        <span class="btn-card"><b>ADD CARD</b></span>
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+@*Display results*@
+<div id="myModel" class="plan-overlay" style="display: none;">
+    <div class="popup-plan">
+        <span class="plan-lbl">
+            Invalid Card. Please try again or add another card.
+        </span>
+        <br />
+        <div style="display: inline-block; " class="" id="divYes">
+            <input class="btn btn-primary btn-md" value="OK" type="button" onclick="$('#myModel').hide();" />
+        </div>
+    </div>
+</div>
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script type="text/javascript">
+    $(function () {
+      //  $('.popup-plan').css('height', $(window).height() * 0.2);
+        var str = '@ViewData["Last4"].ToString()';
+        if (str != 'XXXX')
+            $('.btn-card').text('UPDATE CARD');
+        else
+            $('.btn-card').text('ADD CARD');
+        $('#lastDigits').text('@ViewData["Last4"].ToString()');
+        $('#expiry').text('@ViewData["Expiry"].ToString()');
+        $('#brand').text('@ViewData["Brand"].ToString()');
+        var renderPaymentMethod = function () {
+            var handler = StripeCheckout.configure({
+                key: '@System.Configuration.ConfigurationManager.AppSettings["StripeApiKey2"].ToString()', //Your publishable key from the Stripe Portal
+                //image: "https://app.myppcpal.com/Content/images/logo.png",  //customize the Checkout popup with your logo
+                email: '@Convert.ToString(Session["Email"])',
+                token: function (token, args) {
+                    localStorage.setItem("token", token.id);
+                    $('#settingspinner').show();
+                    AjaxPostToCreateCustomerOnToServer(token.id);
+                }
+            });
+
+            //Stripe's  checkout.js will display a iframe modal to collect CC info
+            handler.open({
+                name: 'My PPC Pal',
+                panelLabel: 'Add Payment Method',
+                description: '',
+                allowRememberMe: true
+            });
+        };
+
+        $("#btnSubscribePayment").click(function () {
+            renderPaymentMethod();
+           
+        });
+
+        var planid = '@Session["PlanID"]';
+        var trailend = new Date('@TrailEndDate');
+        var today = new Date('@Today');
+        if ('@IsCardAdded' == 'False' && ('@Session["PlanStatus"]' == 0 || (trailend < today && planid == 1))) {
+            document.getElementById("tab_dashboard").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_camp").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_report").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_sett").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_help").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_notify").onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_profile").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_sprofile").childNodes[1].onclick = function () { NavigateToPlan(); return false; };
+            document.getElementById("tab_stmnt").childNodes[0].onclick = function () { NavigateToPlan(); return false; };
+        }
+    });
+
+    function AjaxPostToCreateCustomerOnToServer(tokenid) {
+        (localStorage.getItem("token"));
+        $.ajax({
+            url: '../settings/CreateStripeCustomer',
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify({ token: tokenid }),
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            cache: false,
+            success: function (data) {
+                if (data != null) {
+                    if (data.Status != 0) {
+                    $('#lastDigits').text(data.CustomerDetails.Sources[0].Card.Last4);
+                    $('#expiry').text((data.CustomerDetails.Sources[0].Card.ExpirationMonth + "/" + data.CustomerDetails.Sources[0].Card.ExpirationYear));
+                    $('#brand').text(data.CustomerDetails.Sources[0].Card.Brand);
+                    $('#myModel').show();
+                    $('.btn-card').text('UPDATE CARD');
+                    var res = "Thank you for the subscription, card has been added successfully";
+                    if (data.Message != '')
+                        res = "Card has been added successfully," + data.Message;
+                    $('.plan-lbl').text(res);
+                    }
+                    else
+                    {
+                        $('#lastDigits').text('XXXX');
+                        $('#expiry').text('00/00');
+                        $('#brand').text('N/A');
+                        $('#myModel').show();
+                        $('.btn-card').text('ADD CARD');
+                        var res = 'Invalid Card. Please try again';
+                        if (data.Message != '')
+                            res = data.Message;
+                        $('.plan-lbl').text(res);
+                    }
+                }
+                $('#settingspinner').hide();
+            },
+            error: function (xhr) {
+                $("#settingspinner").hide();
+                console.log(xhr.error);
+            }
+        });
+    };
+</script>

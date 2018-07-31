@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Account";
+    ViewBag._NavAccount = "active";
+    Layout = "~/Views/Shared/_Settings.cshtml";
+    var LWAResponse = (String)ViewBag.LwaResponse;
+    bool IsListOfRecords = false;
+    if (ViewBag.ProfilesModel != null)
+    {
+        IsListOfRecords = true;
+    }
+}
+<style>
+    #ul-instruction{
+        list-style:none;
+        text-align:left;
+        margin-left:-65px;
+    }
+    
+</style>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" id="tab_plan">@Html.ActionLink("Plan", "Plan", routeValues: null)</li>
+    <li role="presentation" class="active">@Html.ActionLink("Connect Your Amazon Account", "AmazonAccount", routeValues: null)</li>
+</ul>
+
+<div class="tab-content">
+    <div>
+    @if (Convert.ToInt16(Session["ProfileAccess"]) == 0)
+    {
+        if (IsListOfRecords == false)
+        {
+        <div class="profileSection">
+            <a id="LoginWithAmazon" href="/Settings/LoginWithAmazon">
+                <img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />
+            </a>   
+        </div>
+        }else{
+            <div class="someNotes">
+                <div id="div-instruction">
+                    <div class="tbl-modal">
+                        <h4 style="text-align:center;">Instructions on locating your Amazon Seller ID</h4>
+                        <ul id="ul-instruction">
+                            <li>
+                                <span>Step 1: Login to your Amazon Seller Central Account</span>
+                            </li>
+                            <li>
+                                <span>Step 2: Click “Settings” then “User Permissions”</span>
+                            </li>
+                            <li>
+                                <span>Step 3: Scroll Down to “Amazon MWS Developer Permissions”</span>
+                            </li>
+                            <li>
+                                <span>Step 4: Under the “Your Account Information” Box Amazon displays your Seller ID</span>
+                                <img src="~/Content/images/Seller-Id.jpg" alt="selleraccess" style="width:100%" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="profileSection">
+                <span>
+                    <label style="font-weight:bold;">
+                        Choose Seller ID :
+                    </label>
+                    @Html.DropDownList("Profiles", ViewBag.ProfilesModel as IEnumerable<SelectListItem>, "-- Select --" ,htmlAttributes: new { @class = "drop-group", @id = "drpsellerId" })
+                    <button class="btn btn-info" id="btnSeller" style="padding:8px;">Submit</button>
+                </span>
+            </div>
+        }
+        <div class="form-group" id="divResponse" style="color:#f15e44;font-weight:bold;padding-top:20px;"></div>
+    }
+    else
+    {
+        <div class="someNotes">
+            <p>You have connected My PPC Pal to Amazon via Login with Amazon. Thank you!</p>
+        </div>
+    }
+    </div>
+    @section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryajax")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ('@Session["ProfileAccess"]' == 0) {
+                if ('@IsListOfRecords' == 'False') {
+                    $('#txtAccessPopUp').text('To continue setting up your account, you must login with amazon to access your Amazon Seller Central account.');
+                } else {
+                    $('#txtAccessPopUp').text('Please select the correct Seller ID associated with the Amazon account you would like to manage with My PPC Pal. Please note, we currently only allow you to manage one seller account per My PPC Pal account.');
+                }
+                $('#divAmazonPopup').show();
+                document.getElementById("tab_dashboard").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_camp").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_report").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_sett").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_help").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_profile").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_billing").childNodes[1].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_sprofile").childNodes[1].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_account").childNodes[1].onclick = function () { $('#divAmazonPopup').show(); return false; };
+                document.getElementById("tab_plan").childNodes[0].onclick = function () { $('#divAmazonPopup').show(); return false; };
+            }
+            $('#divResponse').text('@LWAResponse');
+        });
+
+        $('#btnSeller').on('click', function () {
+            var SellerId = $("#drpsellerId option:selected").text();
+            var ProfileId = $("#drpsellerId option:selected").val();
+            if (SellerId == "" || SellerId == null || ProfileId == "" || ProfileId == null) {
+                $('#divResponse').text('Please select the seller Id');
+            } else if (confirm("Please confirm you have followed the provided instructions and selected the correct Seller ID of the account you would like to manage using My PPC Pal.")) {
+                $("#settingspinner").show();
+                _UpdateSellerProfile(SellerId, ProfileId);
+            }
+        });
+
+        function _UpdateSellerProfile(SellerId, ProfileId) {
+            var _url = '@Url.Action("UpdateSellerProfile", "Settings")';
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data: JSON.stringify({ SellerId: SellerId, ProfileId: ProfileId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (data) {
+                    if (data == "success") {
+                        $('#divResponse').html("");
+                        $('#divSuccessPopup').css('display', 'block');
+                    }
+                    else {
+                        $('#divResponse').html(data);
+                    }
+                    $("#settingspinner").hide();
+                },
+                error: function (status) {
+                    $('#divResponse').html("Error! Please try again");
+                    $("#settingspinner").hide();
+                }
+            });
+        }
+
+        function ReturnToAccount() {
+            $('#divAmazonPopup').hide();
+            $('#divSuccessPopup').hide();
+        }
+    </script>
+    }
+</div>

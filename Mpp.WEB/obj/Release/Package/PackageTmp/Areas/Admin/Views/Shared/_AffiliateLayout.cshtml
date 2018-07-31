@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title | MyPPCPal</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
+    @*<link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+    <link href="~/Content/adminapp.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <style>
+        .table {
+            margin-bottom: 1px !important;
+        }
+
+        .showdivmsg {
+            display: inline-block !important;
+        }
+
+        input.ng-dirty.ng-invalid {
+            border: 1px solid red;
+            background-color: rgb(255, 244, 244);
+        }
+
+        .error {
+            color: red;
+        }
+
+        .msg-box {
+            max-width: 450px;
+            border-radius: 3px;
+            padding: 5px 10px 5px 10px;
+            color: aliceblue;
+            position: fixed;
+            left: 50%;
+            top: 100px;
+            background-color: steelblue;
+            font-size: 11px;
+            color: white;
+            margin: 0 0 0 -50px;
+            z-index: 9999;
+            font-size: medium;
+        }
+
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+
+        .table.tblsorting > thead {
+            color: #337ab7;
+        }
+
+        .table.tblsorting .headerSort {
+            background-image: url(/Content/images/bg.png);
+            background-repeat: no-repeat;
+            background-position: right;
+            cursor: pointer;
+        }
+
+        .table.tblsorting .headerSortUp {
+            background-image: url(/Content/images/asc.png);
+        }
+
+        .table.tblsorting .headerSortDown {
+            background-image: url(/Content/images/desc.png);
+        }
+    </style>
+</head>
+<body ng-app="adminapp" class="ng-cloak">
+    <div class="mainContainer">
+        <header class="mainHeader clearfix">
+            <div class="logo pull-left">
+                <a href="../Affiliation/Dashboard"><img src="~/Content/images/logo.png" alt=""></a>
+            </div>
+            <div class="headerRight pull-right">
+                <nav class="mainNav">
+                    <ul>
+                        @*<li class="@ViewBag._TopMenu1">@Html.ActionLink("Dashboard", "Dashboard", "Affiliation", routeValues: new { area = "Admin" }, htmlAttributes: null)</li>*@
+                        @*<li class="@ViewBag._TopMenu2">@Html.ActionLink("Users", "Users", "Account", routeValues: new { area = "Admin" }, htmlAttributes: null)</li>
+                        <li class="@ViewBag._TopMenu3">@Html.ActionLink("Affiliates", "AffiliationCode", "Affiliation", routeValues: new { area = "Admin" }, htmlAttributes: null)</li>
+                        <li class="@ViewBag._TopMenu4">@Html.ActionLink("Settings", "AmazonCode", "Preferences", routeValues: new { area = "Admin" }, htmlAttributes: null)</li>*@
+                    </ul>
+                </nav>
+                <div class="accountNav">
+                    <ul class="clearfix list-unstyled">
+                        @*<li class="notification"><a href="javascript:;"><i class="fa fa-bell"></i> <span class="count">0</span></a></li>*@
+                        <li class="account">
+                            <a href="javascript:;" class="profileImage dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="" alt="">@Session["AdminFName"]</a>
+                            <ul class="dropdown-menu pull-right">
+                                @*<li><a href="#"><i class="fa fa-pencil"></i> Edit Profile</a></li>*@
+                                <li><a href="@Url.Action("Logout", "Account", new { area = "Admin"})"><i class="fa fa-sign-out"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="mainContent">
+            <div class="mainWrap" style="padding: 0;">
+                <div class="container-fluid">
+                    <div class="row">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mainFooter clearfix">
+            <div class="logoFooter pull-left">
+                <a href=""><img src="~/Content/images/logo-footer.jpg" alt=""></a>
+            </div>
+            <nav class="footerNav pull-right">
+                <ul class="list-unstyled">
+                    <li>Copyright © 2017, MyPPCPal</li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </footer>
+
+    </div>
+    @*Display results*@
+    <div class="msg-box" style="display:none">
+        <span id="divresponse"></span>
+    </div>
+
+    <div id="loader1" class="loading_process" style="display: none;">
+        <div class="process-box">
+            <span class="process-lbl" style="margin-top: 19px;">
+                Your session will expire in less
+                than 2 minutes.<br />
+                Would you like to extend the session?
+            </span>
+            <br />
+            <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                <button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="loader2" class="loading_process" style="display: none;">
+        <div class="sessionexpire-box">
+            <span class="process-lbl">
+                Session expired. You will be redirected
+                to login page
+            </span>
+            <br />
+            <div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+                 id="divsessionExpired">
+                <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular-messages.min.js"></script>
+    <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css' type='text/css' media='all' />
+    <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js'></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type='text/css' media='all' />
+    @RenderSection("scripts", required: false)
+    <script>
+
+        //Session timeout
+        function RedirectToWelcomePage() {
+            //  alert("Session expired. You will be redirected to login page");
+            window.location.href = "../Account/Login";
+            return false;
+        }
+        var tick1 = null;
+        var sessionTimeout = @Session.Timeout;
+        //alert(sessionTimeout);
+        var sessionTimeoutWarning = (parseInt(sessionTimeout) - 2); //show alert 2 min before session expire
+        //alert(parseInt(sessionTimeoutWarning));
+        var timeOnPageLoad = new Date();
+        //alert(timeOnPageLoad);
+        var sessionWarningTimer = null;
+        var redirectToWelcomePageTimer = null;
+        //For warning
+        var sessionWarningTimer = setTimeout('SessionWarning()', parseInt(sessionTimeoutWarning) * 60 * 1000);
+
+        var timeForExpiry = null;
+        var minutesForExpiry = null;
+        //Session Warning
+        function SessionWarning() {
+            //minutes left for expiry
+            minutesForExpiry = (parseInt(sessionTimeout) - parseInt(sessionTimeoutWarning));
+            Click();
+        }
+        function Click() {
+            document.getElementById('loader1').style.display = "block";
+            var currentTime = new Date();
+            timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+                parseInt(sessionTimeout));
+            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+            if (Date.parse(currentTime) < timeForExpiry)
+            {
+                StartThisSessionTimer();
+                return false;
+            }
+            return true;
+        }
+
+        //Session timeout
+        function RedirectToWelcomePage() {
+            //  alert("Session expired. You will be redirected to login page");
+            window.location.href = "../Account/Logout";
+            return false;
+        }
+
+
+        function ClearSessionPopUp() {
+            document.getElementById('loader2').style.display = "block";
+            return true;
+        }
+
+        function ExtendSession() {
+            document.getElementById('loader1').style.display = "none";
+            //*************************
+            //EVEN AFTER CLICKING OK(EXTENDING SESSION) OR CANCEL BUTTON,
+            //IF THE SESSION TIME IS OVER. THEN EXIT THE SESSION.
+            var currentTime = new Date();
+            //TIME FOR EXPIRY
+            timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+                parseInt(sessionTimeout));
+
+            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+            if (Date.parse(currentTime) > timeForExpiry) {
+                setTimeout('ClearSessionPopUp()', 10);
+            }
+            else {
+                //reset the time on page load
+                clearTimeout(sessionWarningTimer);
+                timeOnPageLoad = new Date();
+                //alert(timeOnPageLoad);
+                sessionWarningTimer = setTimeout('SessionWarning()', parseInt(sessionTimeoutWarning) * 60 * 1000);
+                return true;
+            }
+            return false;
+        }
+
+
+        function CheckTimeOutOver(e) {
+            document.getElementById('loader1').style.display = "none";
+            //*************************
+            e.preventDefault = true;
+            e.stopPropagation();
+            //EVEN AFTER CLICKING OK(EXTENDING SESSION) OR CANCEL BUTTON,
+            //IF THE SESSION TIME IS OVER. THEN EXIT THE SESSION.
+            var currentTime = new Date();
+            //TIME FOR EXPIRY
+            timeForExpiry = timeOnPageLoad.setMinutes(timeOnPageLoad.getMinutes() +
+                                    parseInt(sessionTimeout));
+            //alert(timeForExpiry);
+            //            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+            if (Date.parse(currentTime) > timeForExpiry) {
+                setTimeout('ClearSessionPopUp()', 10);
+            }
+            else
+            {
+                StartThisSessionTimer();
+                return false;
+            }
+        }
+
+        var timeInSecondsAfterSessionOut = 10;
+        var secondTick = 0;
+        function StartThisSessionTimer() {
+            secondTick++;
+            // alert(secondTick);
+            if (secondTick > timeInSecondsAfterSessionOut) {
+                var currentTime = new Date();
+                //TIME FOR EXPIRY
+                //            //CURRENT TIME IS GREATER THAN THE EXPIRY TIME
+                if (Date.parse(currentTime) > timeForExpiry) {
+                    document.getElementById('loader1').style.display = "none";
+                    setTimeout('ClearSessionPopUp()', 10);
+                }
+            }
+            tick1 = setTimeout("StartThisSessionTimer()", 1000);
+        }
+
+        $(document).ready(function () {
+
+            var firstName = '@Session["AdminFName"]';
+            var intial = firstName.charAt(0);
+            var profileImage = $('.profileImage').text(intial.toUpperCase());
+            var color = setInitialColor(intial);
+            $('.profileImage').css('background', color);
+
+            // alert window
+            function alertDetail() {
+                $('.viewDetail').click(function () {
+                    $('.ProjAlertFull').addClass('active');
+                })
+                $('.alertclose').click(function () {
+                    $('.ProjAlertFull').removeClass('active');
+                })
+            };
+            alertDetail();
+        });
+
+        $('.date_field').datepicker({
+            //comment the beforeShow handler if you want to see the ugly overlay
+            beforeShow: function () {
+                setTimeout(function () {
+                    $('.ui-datepicker').css('z-index', 999999);
+                }, 0);
+            }
+        });
+    </script>
+</body>
+</html>
