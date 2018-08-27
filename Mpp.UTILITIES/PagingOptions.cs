@@ -16,5 +16,6 @@ namespace Mpp.UTILITIES
         public string Date { get; set; }
         public string Date2 { get; set; }
         public int Client { get; set; }
+        public bool IsIgnoreZero { get; set; }
     }
 }

@@ -102,22 +102,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:44</publishTime>
     </File>
     <File Include="bin/Mpp.BUSINESS.dll">
-      <publishTime>07/30/2018 16:37:36</publishTime>
+      <publishTime>08/16/2018 19:42:53</publishTime>
     </File>
     <File Include="bin/Mpp.BUSINESS.pdb">
-      <publishTime>07/30/2018 16:37:36</publishTime>
+      <publishTime>08/16/2018 19:42:53</publishTime>
     </File>
     <File Include="bin/Mpp.UTILITIES.dll">
-      <publishTime>07/30/2018 16:37:35</publishTime>
+      <publishTime>08/16/2018 19:42:51</publishTime>
     </File>
     <File Include="bin/Mpp.UTILITIES.pdb">
-      <publishTime>07/30/2018 16:37:35</publishTime>
+      <publishTime>08/16/2018 19:42:51</publishTime>
     </File>
     <File Include="bin/Mpp.WEB.dll">
-      <publishTime>07/30/2018 16:37:40</publishTime>
+      <publishTime>08/16/2018 19:42:59</publishTime>
     </File>
     <File Include="bin/Mpp.WEB.pdb">
-      <publishTime>07/30/2018 16:37:40</publishTime>
+      <publishTime>08/16/2018 19:42:59</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
       <publishTime>07/30/2018 16:06:45</publishTime>
@@ -309,7 +309,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:38</publishTime>
     </File>
     <File Include="Content/app.css">
-      <publishTime>07/30/2018 16:06:38</publishTime>
+      <publishTime>08/13/2018 17:07:31</publishTime>
     </File>
     <File Include="Content/AutoLogoutSession.css">
       <publishTime>07/30/2018 16:06:38</publishTime>
@@ -459,7 +459,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:39</publishTime>
     </File>
     <File Include="Scripts/Angular/Admin/ClientReportscontroller.js">
-      <publishTime>07/30/2018 16:06:39</publishTime>
+      <publishTime>08/10/2018 17:01:39</publishTime>
     </File>
     <File Include="Scripts/Angular/Admin/DashboardController.js">
       <publishTime>07/30/2018 16:06:39</publishTime>
@@ -486,7 +486,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:39</publishTime>
     </File>
     <File Include="Scripts/Angular/Dashboard/Controller.js">
-      <publishTime>07/30/2018 16:06:39</publishTime>
+      <publishTime>08/10/2018 13:30:53</publishTime>
     </File>
     <File Include="Scripts/Angular/Dashboard/Directives.js">
       <publishTime>07/30/2018 16:06:39</publishTime>
@@ -714,7 +714,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:39</publishTime>
     </File>
     <File Include="Views/Main/Dashboard.cshtml">
-      <publishTime>07/30/2018 16:06:39</publishTime>
+      <publishTime>08/13/2018 17:05:27</publishTime>
     </File>
     <File Include="Views/MyCampaigns/ViewMyCampaigns.cshtml">
       <publishTime>07/30/2018 16:06:39</publishTime>
@@ -822,7 +822,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/30/2018 16:06:39</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/30/2018 16:37:41</publishTime>
+      <publishTime>08/16/2018 19:43:00</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\bin\Deb
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\bin\Debug\Newtonsoft.Json.dll
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\bin\Debug\Stripe.net.dll
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\bin\Debug\Newtonsoft.Json.xml
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\obj\Debug\Mpp.UTILITIES.csprojResolveAssemblyReference.cache
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\obj\Debug\Mpp.UTILITIES.csproj.CoreCompileInputs.cache
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\obj\Debug\Mpp.UTILITIES.csproj.CopyComplete
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.UTILITIES\obj\Debug\Mpp.UTILITIES.dll

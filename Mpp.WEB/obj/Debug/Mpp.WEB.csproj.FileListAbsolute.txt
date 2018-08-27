@@ -1,5 +1,3 @@
-D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.csprojResolveAssemblyReference.cache
-D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.csproj.CoreCompileInputs.cache
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\roslyn\csc.exe
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\roslyn\csc.exe.config
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\roslyn\csc.rsp
@@ -110,6 +108,8 @@ D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\System.We
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\Quartz.xml
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\Common.Logging.xml
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\bin\Common.Logging.Core.xml
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.csprojResolveAssemblyReference.cache
+D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.csproj.CoreCompileInputs.cache
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.csproj.CopyComplete
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.dll
 D:\Client Projects\Jason\MppWebapp30July2018\branches\prod\Mpp.WEB\obj\Debug\Mpp.WEB.pdb

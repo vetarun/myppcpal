@@ -34,7 +34,8 @@
 		length: 5,
 		columnname: $scope.sort.sortingOrder,
 		direction: $scope.sort.reverse,
-		searchname: ''
+        searchname: '',
+        IsIgnoreZero:true
 	};
 
 	$window.onload = function () {
@@ -527,7 +528,8 @@
 
 
 	// change sorting order on model
-	$scope.sort_by = function (newSortingOrder) {
+    $scope.sort_by = function (newSortingOrder) {
+        debugger;
 		if ($scope.sort.sortingOrder == newSortingOrder) {
 			$scope.sort.reverse = !$scope.sort.reverse;
 		}
@@ -539,7 +541,8 @@
 			length: len,
 			columnname: newSortingOrder,
 			direction: $scope.sort.reverse,
-			searchname: $scope.filterParams.nameSearch
+            searchname: $scope.filterParams.nameSearch,
+            IsIgnoreZero: $('#isIgnoreZero').is(':checked')
 		};
 		if ($scope.pagedItems1.records.length > 0) {
 			$scope.Range != 1 ? $scope.GetModalData() : $scope.GetCustomData();
@@ -567,7 +570,7 @@
 	}
 	// change sorting order on dashboard
 	$scope.dbsort_by = function (newSortingOrder) {
-		
+        debugger;
 
 		if ($scope.sort.sortingOrder == newSortingOrder)
 			$scope.sort.reverse = !$scope.sort.reverse;
@@ -576,7 +579,8 @@
 			start: 0,
 			length: 5,
 			columnname: newSortingOrder,
-			direction: $scope.sort.reverse
+            direction: $scope.sort.reverse,
+            IsIgnoreZero:$('#isIgnoreZero').is(':checked')
 		};
 		$scope.GetDashboardData();
 	};
@@ -591,7 +595,7 @@
 
 	//Set Modal sorting default values
 	$scope.SetDefault = function (name, rev, len, range, search) {
-		
+        debugger;
 		$scope.sort.sortingOrder = name;
 		$scope.sort.reverse = rev;
 		$scope.Range = range;
@@ -601,7 +605,8 @@
 			length: len,
 			columnname: $scope.sort.sortingOrder,
 			direction: $scope.sort.reverse,
-			searchname: $scope.filterParams.nameSearch
+            searchname: $scope.filterParams.nameSearch,
+            IsIgnoreZero: $('#isIgnoreZero').is(':checked')
 		};
 		$scope.pagedItems1.currentPage = 0;
 	}

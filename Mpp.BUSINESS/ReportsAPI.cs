@@ -223,8 +223,8 @@ namespace Mpp.BUSINESS
                             if (!(DateTime.Now < TokenExpiryTime) && !String.IsNullOrWhiteSpace(_profileId))
                                 authres = UpdateAccessToken(UserID, ref auth);
 
-                            if (String.IsNullOrWhiteSpace(authres) && !String.IsNullOrWhiteSpace(_profileId))
-                            {
+                            //if (String.IsNullOrWhiteSpace(authres) && !String.IsNullOrWhiteSpace(_profileId))//--comment by hari
+                            //{
                                 foreach (DataRow row in dtbl.Rows)
                                 {
                                     int ReportID = Convert.ToInt32(row["ReportID"]);
@@ -236,7 +236,7 @@ namespace Mpp.BUSINESS
                                     else
                                         SetSearchTermReport(UserID, _profileId, ReportID, ReportDate, Status1, auth);
                                 }
-                            }
+                           // }
                         }
                     }
                 }

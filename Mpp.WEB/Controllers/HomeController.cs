@@ -1,4 +1,5 @@
-﻿using Mpp.WEB.Models;
+﻿using Mpp.BUSINESS;
+using Mpp.WEB.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,6 +16,8 @@ namespace Mpp.WEB.Controllers
     {
         public ActionResult Index()
         {
+            
+
             return View();
         }
 
@@ -50,7 +53,7 @@ namespace Mpp.WEB.Controllers
 
                     {
                         mail.Subject = "|| MyPPCPal User Feedback||";
-                        mail.Body = feedback.Content+"\n\n\nThanks\n "+feedback.Name+"\n"+feedback.Email;
+                        mail.Body = feedback.Content + "\n\n\nThanks\n " + feedback.Name + "\n" + feedback.Email;
                         if (feedback.Attachment != null)
                         {
                             string fileName = Path.GetFileName(feedback.Attachment.FileName);
@@ -59,12 +62,12 @@ namespace Mpp.WEB.Controllers
                         }
                         mail.IsBodyHtml = false;
                         SmtpClient smtp = new SmtpClient();
-                        smtp.Host =ConfigurationManager.AppSettings["Smtphost"].ToString();
+                        smtp.Host = ConfigurationManager.AppSettings["Smtphost"].ToString();
                         smtp.EnableSsl = true;
-                        NetworkCredential networkCredential = new NetworkCredential(from,ConfigurationManager.AppSettings["Password"]);
+                        NetworkCredential networkCredential = new NetworkCredential(from, ConfigurationManager.AppSettings["Password"]);
                         smtp.UseDefaultCredentials = true;
                         smtp.Credentials = networkCredential;
-                        smtp.Port = Convert.ToInt32(ConfigurationManager.AppSettings["Smtpport"]); 
+                        smtp.Port = Convert.ToInt32(ConfigurationManager.AppSettings["Smtpport"]);
                         smtp.Send(mail);
                         return Json(true, JsonRequestBehavior.AllowGet);
 

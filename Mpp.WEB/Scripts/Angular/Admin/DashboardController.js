@@ -102,14 +102,11 @@
     }
 
     /* get Revenue */
-    function GetRevenue(type) {
-      
-        
+    function GetRevenue(type) {      
+        debugger;
         $scope.adminspinner = true;
         var RevenueData = sellerService.GetRevenue(type);
         RevenueData.then(function (payDetail) {
-            
-
             if (payDetail.data.length > 0) {
                 console.log(payDetail.data[0].PayDate)
                 $scope.PaymentData = payDetail.data;
@@ -821,7 +818,7 @@
         GetRevenue(type);
     }
     $scope.RevenueData = function (type) {
-       
+        debugger;
         if (type == 1 && $scope.AdminData.CurrentMonthlySales > 0) {
             GetRevenue(13);
 

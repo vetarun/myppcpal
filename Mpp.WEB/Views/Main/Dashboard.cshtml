@@ -13,103 +13,161 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet">
     @Styles.Render("~/Content/css")
     <style>
-        .searchbox{
+        .searchbox {
             width: 250px;
-            float:left;
-            background:none;
-            font-family:Arial, FontAwesome;
+            float: left;
+            background: none;
+            font-family: Arial, FontAwesome;
             display: inline-block !important;
-            margin-right:20px;
+            margin-right: 20px;
         }
+
         .showdivmsg {
             display: inline-block !important;
         }
-        #chart_container{
-            height:300px !important;
-        }
-        select:hover{
-            cursor:pointer;
-        }
-        .table{
-            margin-bottom:0px !important;
-        }
-        .table.table-bordered.table-striped a:hover{
-            text-decoration:underline;
-            color:#337ab7;
-        }
-        .table.table-bordered.table-striped a{
-            color:#337ab7;
-        }
-        .table.table-bordered.table-striped .header, .table.tablesorter thead tr .header {
-        background-image: url(../Content/images/bg.png);
-        background-repeat: no-repeat;
-        background-position: center right 5px;
-        cursor: pointer;
-        }
-        .table.table-bordered.table-striped .headerSortUp, .table.tablesorter thead tr .headerSortUp {
-            background-image: url(../Content/images/asc.png);
-        }
-        .table.table-bordered.table-striped .headerSortDown , .table.tablesorter thead tr .headerSortDown {
-            background-image: url(../Content/images/desc.png);
+
+        #chart_container {
+            height: 300px !important;
         }
 
+        select:hover {
+            cursor: pointer;
+        }
+
+        .table {
+            margin-bottom: 0px !important;
+        }
+
+            .table.table-bordered.table-striped a:hover {
+                text-decoration: underline;
+                color: #337ab7;
+            }
+
+            .table.table-bordered.table-striped a {
+                color: #337ab7;
+            }
+
+            .table.table-bordered.table-striped .header, .table.tablesorter thead tr .header {
+                background-image: url(../Content/images/bg.png);
+                background-repeat: no-repeat;
+                background-position: center right 5px;
+                cursor: pointer;
+            }
+
+            .table.table-bordered.table-striped .headerSortUp, .table.tablesorter thead tr .headerSortUp {
+                background-image: url(../Content/images/asc.png);
+            }
+
+            .table.table-bordered.table-striped .headerSortDown, .table.tablesorter thead tr .headerSortDown {
+                background-image: url(../Content/images/desc.png);
+            }
+
         [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-            display: none!important;
+            display: none !important;
         }
-        .ul-chart li{
-            float:left;
+
+        .ul-chart li {
+            float: left;
         }
-        .ul-chart li:first-child{
-            color:rgb(124, 181, 236);
-            padding-right:30px;
+
+            .ul-chart li:first-child {
+                color: rgb(124, 181, 236);
+                padding-right: 30px;
+            }
+
+            .ul-chart li:last-child {
+                color: gray;
+            }
+
+        .btn-sm {
+            font-weight: bold;
+            font-size: 13px !important;
         }
-        .ul-chart li:last-child{
-            color:gray;
+
+        .graph-spinner {
+            font-size: 40px !important;
+            top: 120px !important;
         }
-        .btn-sm{
-            font-weight:bold;
-            font-size:13px !important;
+
+        @@media (min-width: 768px) {
+            .container {
+                width: 90%;
+                max-width: 1250px;
+            }
         }
-        .graph-spinner{
-            font-size:40px !important;
-            top:120px !important;
-        }
-        @@media (min-width: 768px) {.container {width: 90%;max-width: 1250px;}}
     </style>
 </head>
 <body ng-app="dashboardApp" ng-controller="dashboardModal" class="ng-cloak">
-	<div class="mainContainer">
-		@Html.Partial("_Header")
-		<div class="mainContent">
-			<div class="mainWrap" style="padding: 0;">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="dashboardContainer clearfix">
-							<div class="chartsContainer clearfix">
-								<div class="col-md-4">
-									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Spend')">
-										<div id="spend" style="height:300px;"></div>
-										<i id="spend-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Sales')">
-										<div id="sales" style="height:300px;"></div>
-										<i id="sales-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Acos')">
-										<div id="acos" style="height:300px;"></div>
-										<i id="acos-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
-									</div>
-								</div>
-							</div>
-							<!-- chartsContainer end -->
-							<div class="container">
-								<div class="dashboardTabs">
+    <div class="mainContainer">
+        @Html.Partial("_Header")
+        <div class="mainContent">
+            <div class="mainWrap" style="padding: 0;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="dashboardContainer clearfix">
+                            <div class="chart-section">
+                                <div class="chartsContainer paddingtop-15 paddingbottom-15 clearfix">
+                                    <div class="col-md-4">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Spend')">
+                                            <div id="spend" style="height:300px;"></div>
+                                            <i id="spend-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Sales')">
+                                            <div id="sales" style="height:300px;"></div>
+                                            <i id="sales-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Acos')">
+                                            <div id="acos" style="height:300px;"></div>
+                                            <i id="acos-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chartsContainer paddingtop-15 paddingbottom-15 clearfix">
+                                    <div class="col-md-3">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Impressions')">
+                                            <div id="impressions" style="height:300px;"></div>
+                                            <i id="impressions-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('Clicks')">
+                                            <div id="clicks" style="height:300px;"></div>
+                                            <i id="clicks-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('CTR')">
+                                            <div id="ctr" style="height:300px;"></div>
+                                            <i id="ctr-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="chartstyle" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target=".chartInfo" onclick="GetModal('CPC')">
+                                            <div id="cpc" style="height:300px;"></div>
+                                            <i id="cpc-spinner" class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" style="display:none;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-									<!-- Nav tabs -->
+                            <!-- chartsContainer end -->
+                            <div class="container">
+                                <br />
+                                <div class="dashboardTabs">
+                                    <div class="Section Section--fillTop ignore_zero">
+                                        <fieldset class="Fieldset Fieldset--subdued">
+                                            <span class="Fieldset-childLeftRight Fieldset-childTopBottom Fieldset-child--subdued Fieldset-child--checkboxActive u-paddingSm u-displayBlock">
+                                                @Html.CheckBox("isIgnoreZero", true)
+                                                <label class="Fieldset-label">Ignore "0" Values</label>
+                                            </span>
+                                            <span></span>
+                                        </fieldset>
+                                    </div>
+                                    <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active"><a href="#topCampaigns" ng-click="LoadDashboard(0)" aria-controls="topCampaigns" role="tab" data-toggle="tab">Performance by Campaigns</a></li>
                                         <li role="presentation"><a href="#topAdgroups" ng-click="LoadDashboard(2)" aria-controls="topAdgroups" role="tab" data-toggle="tab">Performance by Ad Groups</a></li>
@@ -118,248 +176,248 @@
                                         @*<li role="presentation"><a href="#topOptimizations" ng-click="LoadDashboard(3)" aria-controls="topOptimizations" role="tab" data-toggle="tab">Optimizations Report</a></li>*@
                                     </ul>
 
-									<!-- Tab panes -->
-									<div class="tab-content">
-										<div role="tabpanel" class="tab-pane active" id="topCampaigns">
-											<table class="table table-bordered table-striped">
-												<thead>
-													<tr>
-														<th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
-														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
-														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
-														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
-														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
-														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
-														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
-														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="r in pagedItems2.records">
-														<td>{{r.CampaignName}}</td>
-														<td>{{r.ACoS}}%</td>
-														<td>{{r.Spend | currency}}</td>
-														<td>{{r.Sales | currency}}</td>
-														<td>{{r.Impressions}}</td>
-														<td>{{r.Clicks}}</td>
-														<td>{{r.CTR}}%</td>
-														<td>{{r.CostPerClick | currency}}</td>
-													</tr>
-													<tr ng-show="showmsg">
-														<td colspan="8">
-															No Records found!
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<div class="viewMoreData">
-												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(0)">View More <i class="fa fa-angle-right"></i></button>
-											</div>
-										</div>
-										<div role="tabpanel" class="tab-pane" id="topAdgroups">
-											<table class="table table-bordered table-striped">
-												<thead>
-													<tr>
-														<th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
-														<th ng-class="selectedCls('Campaign')" ng-click="dbsort_by('Campaign')">Campaign</th>
-														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
-														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
-														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
-														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
-														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
-														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
-														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="r in pagedItems2.records">
-														<td>{{r.AdGroupName}}</td>
-														<td>{{r.Campaign}}</td>
-														<td>{{r.ACoS}}%</td>
-														<td>{{r.Spend | currency}}</td>
-														<td>{{r.Sales | currency}}</td>
-														<td>{{r.Impressions}}</td>
-														<td>{{r.Clicks}}</td>
-														<td>{{r.CTR}}%</td>
-														<td>{{r.CostPerClick | currency}}</td>
-													</tr>
-													<tr ng-show="showmsg">
-														<td colspan="9">
-															No Records found!
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<div class="viewMoreData">
-												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataAdInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(2)">View More <i class="fa fa-angle-right"></i></button>
-											</div>
-										</div>
-										<div role="tabpanel" class="tab-pane" id="topKeywords">
-											
-											<table class="table table-bordered table-striped">
-												<thead>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane active" id="topCampaigns">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
+                                                        <th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+                                                        <th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+                                                        <th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+                                                        <th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+                                                        <th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+                                                        <th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+                                                        <th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="r in pagedItems2.records">
+                                                        <td>{{r.CampaignName}}</td>
+                                                        <td>{{r.ACoS}}%</td>
+                                                        <td>{{r.Spend | currency}}</td>
+                                                        <td>{{r.Sales | currency}}</td>
+                                                        <td>{{r.Impressions}}</td>
+                                                        <td>{{r.Clicks}}</td>
+                                                        <td>{{r.CTR}}%</td>
+                                                        <td>{{r.CostPerClick | currency}}</td>
+                                                    </tr>
+                                                    <tr ng-show="showmsg">
+                                                        <td colspan="8">
+                                                            No Records found!
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="viewMoreData">
+                                                <button class="btn" type="button" data-toggle="modal" data-target=".moreDataInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(0)">View More <i class="fa fa-angle-right"></i></button>
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="topAdgroups">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
+                                                        <th ng-class="selectedCls('Campaign')" ng-click="dbsort_by('Campaign')">Campaign</th>
+                                                        <th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+                                                        <th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+                                                        <th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+                                                        <th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+                                                        <th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+                                                        <th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+                                                        <th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="r in pagedItems2.records">
+                                                        <td>{{r.AdGroupName}}</td>
+                                                        <td>{{r.Campaign}}</td>
+                                                        <td>{{r.ACoS}}%</td>
+                                                        <td>{{r.Spend | currency}}</td>
+                                                        <td>{{r.Sales | currency}}</td>
+                                                        <td>{{r.Impressions}}</td>
+                                                        <td>{{r.Clicks}}</td>
+                                                        <td>{{r.CTR}}%</td>
+                                                        <td>{{r.CostPerClick | currency}}</td>
+                                                    </tr>
+                                                    <tr ng-show="showmsg">
+                                                        <td colspan="9">
+                                                            No Records found!
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="viewMoreData">
+                                                <button class="btn" type="button" data-toggle="modal" data-target=".moreDataAdInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(2)">View More <i class="fa fa-angle-right"></i></button>
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="topKeywords">
 
-													<tr>
-														<th ng-class="selectedCls('KeywordName')" ng-click="dbsort_by('KeywordName')">Keyword</th>
-														<th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
-														<th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
-														<th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
-														<th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
-														<th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
-														<th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
-														<th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
-														<th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
-														<th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="r in pagedItems2.records">
-														<td>{{r.KeywordName}}</td>
-														<td>{{r.CampaignName}}</td>
-														<td>{{r.AdGroupName}}</td>
-														<td>{{r.ACoS}}%</td>
-														<td>{{r.Spend | currency}}</td>
-														<td>{{r.Sales | currency}}</td>
-														<td>{{r.Impressions}}</td>
-														<td>{{r.Clicks}}</td>
-														<td>{{r.CTR}}%</td>
-														<td>{{r.CostPerClick | currency}}</td>
-													</tr>
-													<tr ng-show="showmsg">
-														<td colspan="10">
-															No Records found!
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<div class="viewMoreData">
-												<button class="btn" type="button" data-toggle="modal" data-target=".moreDataKeyInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(1)">View More <i class="fa fa-angle-right"></i></button>
-											</div>
-										</div>
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+
+                                                    <tr>
+                                                        <th ng-class="selectedCls('KeywordName')" ng-click="dbsort_by('KeywordName')">Keyword</th>
+                                                        <th ng-class="selectedCls('CampaignName')" ng-click="dbsort_by('CampaignName')">Campaign</th>
+                                                        <th ng-class="selectedCls('AdGroupName')" ng-click="dbsort_by('AdGroupName')">Ad Group</th>
+                                                        <th ng-class="selectedCls('ACoS')" ng-click="dbsort_by('ACoS')">ACoS</th>
+                                                        <th ng-class="selectedCls('Spend')" ng-click="dbsort_by('Spend')">Spend</th>
+                                                        <th ng-class="selectedCls('Sales')" ng-click="dbsort_by('Sales')">Sales</th>
+                                                        <th ng-class="selectedCls('Impressions')" ng-click="dbsort_by('Impressions')">Impressions</th>
+                                                        <th ng-class="selectedCls('Clicks')" ng-click="dbsort_by('Clicks')">Clicks</th>
+                                                        <th ng-class="selectedCls('CTR')" ng-click="dbsort_by('CTR')">CTR</th>
+                                                        <th ng-class="selectedCls('CostPerClick')" ng-click="dbsort_by('CostPerClick')">CPC</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="r in pagedItems2.records">
+                                                        <td>{{r.KeywordName}}</td>
+                                                        <td>{{r.CampaignName}}</td>
+                                                        <td>{{r.AdGroupName}}</td>
+                                                        <td>{{r.ACoS}}%</td>
+                                                        <td>{{r.Spend | currency}}</td>
+                                                        <td>{{r.Sales | currency}}</td>
+                                                        <td>{{r.Impressions}}</td>
+                                                        <td>{{r.Clicks}}</td>
+                                                        <td>{{r.CTR}}%</td>
+                                                        <td>{{r.CostPerClick | currency}}</td>
+                                                    </tr>
+                                                    <tr ng-show="showmsg">
+                                                        <td colspan="10">
+                                                            No Records found!
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="viewMoreData">
+                                                <button class="btn" type="button" data-toggle="modal" data-target=".moreDataKeyInfo" data-backdrop="static" data-keyboard="false" ng-click="LoadModal(1)">View More <i class="fa fa-angle-right"></i></button>
+                                            </div>
+                                        </div>
                                         @* #158 *@
-										@*<div role="tabpanel" class="tab-pane" id="topOptimizations"  style=" height:200px; overflow-y:auto;">
-											<table class="table table-bordered table-striped">
-												<thead>
-													<tr>
-														<th ng-class="selectedCls('CampaignName')" ng-click="dbsortOptimize('CampaignName')">CampaignName</th>
-														<th ng-class="selectedCls('ModifiedOn')" ng-click="dbsortOptimize('ModifiedOn')">ModifiedOn</th>
-													</tr>
-												</thead>
-												<tbody >
-													<tr ng-repeat="r in pagedItems2.records">
-														<td  style="cursor:pointer;" ng-click="getKeyLog(r.CampID,r.CampaignName,0)">{{r.CampaignName}}</td>
+                                        @*<div role="tabpanel" class="tab-pane" id="topOptimizations"  style=" height:200px; overflow-y:auto;">
+                                                <table class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th ng-class="selectedCls('CampaignName')" ng-click="dbsortOptimize('CampaignName')">CampaignName</th>
+                                                            <th ng-class="selectedCls('ModifiedOn')" ng-click="dbsortOptimize('ModifiedOn')">ModifiedOn</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody >
+                                                        <tr ng-repeat="r in pagedItems2.records">
+                                                            <td  style="cursor:pointer;" ng-click="getKeyLog(r.CampID,r.CampaignName,0)">{{r.CampaignName}}</td>
 
-														<td>{{r.ModifiedOn}}</td>
-													</tr>
-													<tr ng-show="showmsg">
-														<td colspan="8">
-															No Records found!
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<div class="viewMoreData">
-												</div>
-										</div>*@
-										<i class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" ng-show="_tabspinner" style="top:630px !important;"></i>
-									</div>
-								</div>
-							</div>
-							<input id="hdntype" type="hidden" />
-							<input id="hdnstartdate" type="hidden" />
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		@Html.Partial("_Footer")
-		@Html.Partial("_DashboardModal")
-		
+                                                            <td>{{r.ModifiedOn}}</td>
+                                                        </tr>
+                                                        <tr ng-show="showmsg">
+                                                            <td colspan="8">
+                                                                No Records found!
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <div class="viewMoreData">
+                                                    </div>
+                                            </div>*@
+                                        <i class="fa fa-spinner fa-spin mpp-spinner graph-spinner" aria-hidden="true" ng-show="_tabspinner" style="top:630px !important;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <input id="hdntype" type="hidden" />
+                            <input id="hdnstartdate" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_Footer")
+        @Html.Partial("_DashboardModal")
 
-		<div class="modal fade chartInfo" tabindex="-1" role="dialog" aria-labelledby="chartInfo" data-backdrop="static" data-keyboard="false">
-			<div class="modal-dialog modal-xl" role="document">
-				<div class="modal-content">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-					<div class="modal-header clearfix" style="margin-top: 20px; padding-left: 50px;">
-						<h2 id="modalheader" class="pull-left"></h2>
 
-						<div class="pull-right dateRangeOption">
-							<div id="custmoption" class="customDateOption" style="display:none;">
-								<input id="txtstartdate" placeholder="From" type="text" class="form-control date-picker" readonly>
-								<input id="txtenddate" placeholder="To" type="text" class="form-control date-picker" readonly>
-								<button type="submit" class="btn btn-info" id="btncustmchart">Submit</button>
-							</div>
-							<select id="ddlspendchart" class="form-control selectDate pull-right" style="width: auto;">
-								<option value="7">7 Days</option>
-								<option value="30">30 Days</option>
-								<option value="90">90 Days</option>
-								<option value="0">Year to Date</option>
-								<option value="1">Custom</option>
-							</select>
-							<div id="divmsgerror" class="text-danger" style="width:380px;"></div>
-						</div>
-					</div>
-					<div class="modal-body">
-						<div id="modalChart" style="height: 530px;margin-bottom:15px;">
+        <div class="modal fade chartInfo" tabindex="-1" role="dialog" aria-labelledby="chartInfo" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="modal-header clearfix" style="margin-top: 20px; padding-left: 50px;">
+                        <h2 id="modalheader" class="pull-left"></h2>
 
-						</div>
-					</div>
-				</div>
-			</div>
-			<i id="chart-spinner" class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" style="display:none;"></i>
-		</div>
-		@* Trial Plan expiry alert *@
-		<!-- Modal -->
-		<div id="myModel" class="plan-overlay" style="display: none;padding:3px;">
-			<div class="popup-plan">
-				<h3 style="color:#0297d9;">Alert!!</h3>
-				<span id="alert" style="padding:5px;">
-					Your trial plan will be expired on @trialEnd.ToShortDateString().
-				</span>
-				<br />
-				<br />
-				<div style="display:inline-block;vertical-align:middle;" id="divYes">
-					<button class="btn btn-info btn-sm" onclick="location.href='@Url.Action("Plan","Settings")'">Sign Up</button>
-					<button id="Btnsub" class="btn btn-info btn-sm" style="display:none;margin-left:30px;">Remind Me Later</button>
-				</div>
-			</div>
-		</div>
-		<div id="myModel1" class="plan-overlay" style="display: none;">
-			<div class="popup-plan">
-				<span class="plan-lbl">
-					We are unable to find your stripe details. Please contact administrator.
-				</span>
-			</div>
-		</div>
+                        <div class="pull-right dateRangeOption">
+                            <div id="custmoption" class="customDateOption" style="display:none;">
+                                <input id="txtstartdate" placeholder="From" type="text" class="form-control date-picker" readonly>
+                                <input id="txtenddate" placeholder="To" type="text" class="form-control date-picker" readonly>
+                                <button type="submit" class="btn btn-info" id="btncustmchart">Submit</button>
+                            </div>
+                            <select id="ddlspendchart" class="form-control selectDate pull-right" style="width: auto;">
+                                <option value="7">7 Days</option>
+                                <option value="30">30 Days</option>
+                                <option value="90">90 Days</option>
+                                <option value="0">Year to Date</option>
+                                <option value="1">Custom</option>
+                            </select>
+                            <div id="divmsgerror" class="text-danger" style="width:380px;"></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalChart" style="height: 530px;margin-bottom:15px;">
 
-		<div id="loader1" class="loading_process" style="display: none;">
-			<div class="process-box">
-				<span class="process-lbl">
-					Your session will expire in less
-					than 2 minutes.<br />
-					Would you like to extend the session?
-				</span>
-				<br />
-				<div style="display:inline-block;vertical-align:middle;" id="divYes">
-					<button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
-					<button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
-				</div>
-			</div>
-		</div>
-		<div id="loader2" class="loading_process" style="display: none;">
-			<div class="sessionexpire-box">
-				<span class="process-lbl">
-					Session expired. You will be redirected
-					to home page
-				</span>
-				<br />
-				<div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
-					 id="divsessionExpired">
-					<button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <i id="chart-spinner" class="fa fa-spinner fa-spin mpp-spinner" aria-hidden="true" style="display:none;"></i>
+        </div>
+        @* Trial Plan expiry alert *@
+        <!-- Modal -->
+        <div id="myModel" class="plan-overlay" style="display: none;padding:3px;">
+            <div class="popup-plan">
+                <h3 style="color:#0297d9;">Alert!!</h3>
+                <span id="alert" style="padding:5px;">
+                    Your trial plan will be expired on @trialEnd.ToShortDateString().
+                </span>
+                <br />
+                <br />
+                <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                    <button class="btn btn-info btn-sm" onclick="location.href='@Url.Action("Plan","Settings")'">Sign Up</button>
+                    <button id="Btnsub" class="btn btn-info btn-sm" style="display:none;margin-left:30px;">Remind Me Later</button>
+                </div>
+            </div>
+        </div>
+        <div id="myModel1" class="plan-overlay" style="display: none;">
+            <div class="popup-plan">
+                <span class="plan-lbl">
+                    We are unable to find your stripe details. Please contact administrator.
+                </span>
+            </div>
+        </div>
+
+        <div id="loader1" class="loading_process" style="display: none;">
+            <div class="process-box">
+                <span class="process-lbl">
+                    Your session will expire in less
+                    than 2 minutes.<br />
+                    Would you like to extend the session?
+                </span>
+                <br />
+                <div style="display:inline-block;vertical-align:middle;" id="divYes">
+                    <button class="btn btn-info btn-sm" onclick="return ExtendSession();" style="margin-right:40px;">Yes</button>
+                    <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToWelcomePage();">No</button>
+                </div>
+            </div>
+        </div>
+        <div id="loader2" class="loading_process" style="display: none;">
+            <div class="sessionexpire-box">
+                <span class="process-lbl">
+                    Session expired. You will be redirected
+                    to home page
+                </span>
+                <br />
+                <div style="display: inline-block; vertical-align: middle;" class="green-btn sessionTimeout"
+                     id="divsessionExpired">
+                    <button id="Btnsub" class="btn btn-info btn-sm" onclick="return RedirectToHomePage();">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @Scripts.Render("~/bundles/jqueryajax")
     @Scripts.Render("~/bundles/bootstrap")
     <script type='text/javascript' src="https://code.highcharts.com/highcharts.js"></script>
@@ -424,6 +482,10 @@
                     SpendResult(startDate, endDate, data.spendmodel, false);
                     SaleResult(startDate, endDate, data.salemodel, false);
                     AcosResult(startDate, endDate, data.acosmodel, false);
+                    ImpressionResult(startDate, endDate, data.impressions, false);
+                    ClickResult(startDate, endDate, data.clicks, false);
+                    CTRResult(startDate, endDate, data.ctr, false);
+                    CPCResult(startDate, endDate, data.cpc, false);
                     hideGrpahSpinner();
                 },
                 error: function (xhr) {
@@ -437,12 +499,22 @@
             $('#spend-spinner').show();
             $('#sales-spinner').show();
             $('#acos-spinner').show();
+
+            $('#impressions-spinner').show();
+            $('#clicks-spinner').show();
+            $('#ctr-spinner').show();
+            $('#cpc-spinner').show();
         }
 
         function hideGrpahSpinner() {
             $('#spend-spinner').hide();
             $('#sales-spinner').hide();
             $('#acos-spinner').hide();
+
+            $('#impressions-spinner').hide();
+            $('#clicks-spinner').hide();
+            $('#ctr-spinner').hide();
+            $('#cpc-spinner').hide();
         }
 
         //Modal Charts
@@ -509,8 +581,16 @@
                             SpendResult(StartDate, EndDate, data, true, type);
                         } else if (type == 'Sales') {
                             SaleResult(StartDate, EndDate, data, true, type);
-                        } else {
+                        } else if (type == 'Acos'){
                             AcosResult(StartDate, EndDate, data, true, type);
+                        } else if (type == 'Impressions') {
+                            ImpressionResult(StartDate, EndDate, data, true, type);
+                        } else if (type == 'Clicks') {
+                            ClickResult(StartDate, EndDate, data, true, type);
+                        } else if (type == 'CTR') {
+                            CTRResult(StartDate, EndDate, data, true, type);
+                        } else  {
+                            CPCResult(StartDate, EndDate, data, true, type);
                         }
                     }
                     $('#chart-spinner').hide();
@@ -615,7 +695,6 @@
             else
                 SpendChart(spend_Xseries, spend_Yseries);
         }
-
         function SpendChart(Xspendserie, Yspendserie) {
             var days = Xspendserie.length - 1.999;
             // Spend chart
@@ -644,6 +723,7 @@
                 }]
             });
         }
+
         // Sales Chart
         function SaleResult(sale_Startday, sale_Endday, salemodel, showmodal, type) {
             var sales_Xseries = new Array();
@@ -712,6 +792,7 @@
                 }]
             });
         }
+
         //Acos Chart
         function AcosResult(acos_Startday, acos_Endday, acosmodel, showmodal, type) {
             var acos_Xseries = new Array();
@@ -753,7 +834,6 @@
             else
                 AcosChart(acos_Xseries, acos_Yseries);
         }
-
         function AcosChart(Xacosserie, Yacosserie) {
             var days = Xacosserie.length - 1.999;
             var container_modalchart = Highcharts.chart('acos', {
@@ -783,6 +863,282 @@
             });
         }
 
+        // Impression Chart
+        function ImpressionResult(impression_Startday, impression_Endday, impressionmodel, showmodal, type) {
+            var impression_Xseries = new Array();
+            var impression_Yseries = new Array();
+            var impression_Xserie, impression_Yserie;
+
+            while (impression_Startday <= impression_Endday) {
+                var impression = 0;
+                var setImpressionX;
+                if (impressionmodel.length > 0) {
+                    for (var i in impressionmodel) {
+                        var reportDay = new Date(parseInt(impressionmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(impression_Startday) == getNewDate(reportDay)) {
+                            impression = impressionmodel[i].Impressions;
+                            break;
+                        } else {
+                            impression = 0;
+                        }
+                    }
+                    setImpressionX = monthNames[impression_Startday.getMonth()] + '\xa0' + impression_Startday.getDate();
+                    impression_Xserie = new Array(setImpressionX);
+                    impression_Yserie = new Array(setImpressionX, impression);
+                    impression_Xseries.push(impression_Xserie);
+                    impression_Yseries.push(impression_Yserie);
+                }
+                else {
+                    setSpendX = monthNames[impression_Startday.getMonth()] + '\xa0' + impression_Startday.getDate();
+                    impression_Xserie = new Array(setImpressionX);
+                    impression_Yserie = new Array(setImpressionX, impression);
+                    impression_Xseries.push(impression_Xserie);
+                    impression_Yseries.push(impression_Yserie);
+                }
+                impression_Startday = impression_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalHighchartForImpressionAndClick(impression_Xseries, impression_Yseries, type, false)
+            else
+                ImpressionChart(impression_Xseries, impression_Yseries);
+        }
+        function ImpressionChart(Ximpressionserie, Yimpressionserie) {
+            var days = Ximpressionserie.length - 1.999;
+            // Spend chart
+            var container_modalchart = Highcharts.chart('impressions', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Impressions'
+                },
+                xAxis: {
+                    categories: Ximpressionserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Impressions (#)',
+                    }
+                },
+                tooltip: {
+                    valuePrefix: ''
+                },
+                series: [{
+                    name: 'Impression',
+                    data: Yimpressionserie
+                }]
+            });
+        }
+
+        // Click Chart
+        function ClickResult(click_Startday, click_Endday, clickmodel, showmodal, type) {
+            var click_Xseries = new Array();
+            var click_Yseries = new Array();
+            var click_Xserie, click_Yserie;
+
+            while (click_Startday <= click_Endday) {
+                var click = 0;
+                var setClickX;
+                if (clickmodel.length > 0) {
+                    for (var i in clickmodel) {
+                        var reportDay = new Date(parseInt(clickmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(click_Startday) == getNewDate(reportDay)) {
+                            click = clickmodel[i].Clicks;
+                            break;
+                        } else {
+                            click = 0;
+                        }
+                    }
+                    setClickX = monthNames[click_Startday.getMonth()] + '\xa0' + click_Startday.getDate();
+                    click_Xserie = new Array(setClickX);
+                    click_Yserie = new Array(setClickX, click);
+                    click_Xseries.push(click_Xserie);
+                    click_Yseries.push(click_Yserie);
+                }
+                else {
+                    setSpendX = monthNames[click_Startday.getMonth()] + '\xa0' + click_Startday.getDate();
+                    click_Xserie = new Array(setClickX);
+                    click_Yserie = new Array(setClickX, click);
+                    click_Xseries.push(click_Xserie);
+                    click_Yseries.push(click_Yserie);
+                }
+                click_Startday = click_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalHighchartForImpressionAndClick(click_Xseries, click_Yseries, type, false)
+            else
+                ClickChart(click_Xseries, click_Yseries);
+        }
+        function ClickChart(Xclickserie, Yclickserie) {
+            var days = Xclickserie.length - 1.999;
+            // Spend chart
+            var container_modalchart = Highcharts.chart('clicks', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Clicks'
+                },
+                xAxis: {
+                    categories: Xclickserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Clicks (#)',
+                    }
+                },
+                tooltip: {
+                    valuePrefix: ''
+                },
+                series: [{
+                    name: 'Clicks',
+                    data: Yclickserie
+                }]
+            });
+        }
+
+        //CTR
+        function CTRResult(ctr_Startday, ctr_Endday, ctrmodel, showmodal, type) {
+            var ctr_Xseries = new Array();
+            var ctr_Yseries = new Array();
+
+            var ctrdate_New = new Date(ctr_Endday);
+            var ctr_Xserie, ctr_Yserie;
+
+            while (ctr_Startday <= ctr_Endday) {
+                var ctr = 0;
+                var setCtrX;
+                if (ctrmodel.length > 0) {
+                    for (var i in ctrmodel) {
+                        var reportDay = new Date(parseInt(ctrmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(ctr_Startday) == getNewDate(reportDay)) {
+                            ctr = ctrmodel[i].Impressions == 0 ? 0 : (ctrmodel[i].Clicks / ctrmodel[i].Impressions) * 100;
+                            break;
+                        } else {
+                            ctr = 0;
+                        }
+                    }
+                    setCtrX = monthNames[ctr_Startday.getMonth()] + '\xa0' + ctr_Startday.getDate();
+                    ctr_Xserie = new Array(setCtrX);
+                    ctr_Yserie = new Array(setCtrX, Math.round(ctr * 100) / 100);
+                    ctr_Xseries.push(ctr_Xserie);
+                    ctr_Yseries.push(ctr_Yserie);
+                }
+                else {
+                    setCtrX = monthNames[ctr_Startday.getMonth()] + '\xa0' + ctr_Startday.getDate();
+                    ctr_Xserie = new Array(setCtrX);
+                    ctr_Yserie = new Array(setCtrX, ctr);
+                    ctr_Xseries.push(ctr_Xserie);
+                    ctr_Yseries.push(ctr_Yserie);
+                }
+                ctr_Startday = ctr_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalCtrHighchart(ctr_Xseries, ctr_Yseries, type)
+            else
+                CtrChart(ctr_Xseries, ctr_Yseries);
+        }
+        function CtrChart(Xacosserie, Yacosserie) {
+            var days = Xacosserie.length - 1.999;
+            var container_modalchart = Highcharts.chart('ctr', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'CTR'
+                },
+
+                xAxis: {
+                    categories: Xacosserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Click-Through Rate (%)',
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                series: [{
+                    name: 'CTR',
+                    data: Yacosserie
+                }]
+            });
+        }
+
+        //CPC
+        function CPCResult(cpc_Startday, cpc_Endday, cpcmodel, showmodal, type) {
+            var cpc_Xseries = new Array();
+            var cpc_Yseries = new Array();
+
+            var cpcdate_New = new Date(cpc_Endday);
+            var cpc_Xserie, cpc_Yserie;
+
+            while (cpc_Startday <= cpc_Endday) {
+                var cpc = 0;
+                var setCpcX;
+                if (cpcmodel.length > 0) {
+                    for (var i in cpcmodel) {
+                        var reportDay = new Date(parseInt(cpcmodel[i].ReportDay.substr(6)));
+                        if (getNewDate(cpc_Startday) == getNewDate(reportDay)) {
+                            cpc = cpcmodel[i].Clicks == 0 ? 0 : (cpcmodel[i].Spend / cpcmodel[i].Clicks);
+                            break;
+                        } else {
+                            cpc = 0;
+                        }
+                    }
+                    setCpcX = monthNames[cpc_Startday.getMonth()] + '\xa0' + cpc_Startday.getDate();
+                    cpc_Xserie = new Array(setCpcX);
+                    cpc_Yserie = new Array(setCpcX, Math.round(cpc * 100) / 100);
+                    cpc_Xseries.push(cpc_Xserie);
+                    cpc_Yseries.push(cpc_Yserie);
+                }
+                else {
+                    setCpcX = monthNames[cpc_Startday.getMonth()] + '\xa0' + cpc_Startday.getDate();
+                    cpc_Xserie = new Array(setCpcX);
+                    cpc_Yserie = new Array(setCpcX, cpc);
+                    cpc_Xseries.push(cpc_Xserie);
+                    cpc_Yseries.push(cpc_Yserie);
+                }
+                cpc_Startday = cpc_Startday.addDays(1);
+            }
+            if (showmodal == true)
+                ModalCpcHighchart(cpc_Xseries, cpc_Yseries, type)
+            else
+                CpcChart(cpc_Xseries, cpc_Yseries);
+        }
+        function CpcChart(Xacosserie, Yacosserie) {
+            var days = Xacosserie.length - 1.999;
+            var container_modalchart = Highcharts.chart('cpc', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'CPC'
+                },
+
+                xAxis: {
+                    categories: Xacosserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: 'Cost Per Click ($)',
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '$'
+                },
+                series: [{
+                    name: 'CPC',
+                    data: Yacosserie
+                }]
+            });
+        }
+
         //Handle morethan 60 days
         function getSingleChart(_Startday, _Endday, model, type) {
             var start_Year = _Startday.getFullYear();
@@ -805,6 +1161,8 @@
                     var amount = 0;
                     var sales = 0;
                     var spend = 0;
+                    var click = 0;
+                    var impression = 0;
                     var len = model.length;
                     if (len > 0) {
                         for (; i < len; i++) {
@@ -817,12 +1175,27 @@
                                 } else if (type == "Acos") {
                                     spend += model[i].Spend;
                                     sales += model[i].Sales;
+                                } else if (type == "Impressions") {
+                                    amount += model[i].Impressions;
+                                } else if (type == "Clicks") {
+                                    amount += model[i].Clicks;
+                                } else if (type == "CTR") {
+                                    click += model[i].Clicks;
+                                    impression += model[i].Impressions;
+                                } else if (type == "CPC") {
+                                    click += model[i].Clicks;
+                                    spend += model[i].Spend;
                                 }
+
                             }
                         }
                     }
                     if (type == "Acos")
-                        amount = sales!=0 ? (spend/sales) *100 : 0;
+                        amount = sales != 0 ? (spend / sales) * 100 : 0;
+                    else if (type == "CTR")
+                        amount = impression != 0 ? (click / impression) * 100 : 0;
+                    else if (type == "CPC")
+                        amount = click != 0 ? (spend / click) : 0;
                     setX = monthNames[strtmonth];
                     Xserie = new Array(setX);
                     Yserie = new Array(setX, Math.round(amount*100)/100);
@@ -831,7 +1204,19 @@
                 }
                 strtmonth = 0;
             }
-            type == "Acos" ? ModalAcosHighchart(Xseries, Yseries, type, true) : ModalHighchart(Xseries, Yseries, type, true);
+            //type == "Acos" ? ModalAcosHighchart(Xseries, Yseries, type, true) : ModalHighchart(Xseries, Yseries, type, true);
+
+             if (type == "Spend" || type == "Sales")
+                 ModalHighchart(Xseries, Yseries, type, true)
+             else if (type == "Acos")
+                 ModalAcosHighchart(Xseries, Yseries, type, true)
+            else if (type == "Impressions" || type == "Clicks")
+                ModalHighchartForImpressionAndClick(Xseries, Yseries, type, true)
+             else if (type == "CTR" )
+                 ModalCtrHighchart(Xseries, Yseries, type, true)
+             else if (type == "CPC")
+                 ModalCpcHighchart(Xseries, Yseries, type, true)
+
         }
 
         //Sales,Spend Chart shown in modal window
@@ -896,7 +1281,98 @@
                 }]
             });
         }
+        //Impressions, clicks Chart shown in modal window
+        function ModalHighchartForImpressionAndClick(Xserie, Yserie, Type, IsMonth) {
+            var days = IsMonth == true ? Xserie.length - 1 : Xserie.length - 1.999;
+            $('#modalheader').html(Type);
+            var container_modalchart = new Highcharts.chart('modalChart', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: Type
+                },
 
+                xAxis: {
+                    categories: Xserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: Type + " (#)",
+                    }
+                },
+                tooltip: {
+                    valuePrefix: ""
+                },
+                series: [{
+                    name: Type,
+                    data: Yserie
+                }]
+            });
+        }
+        //CTR Chart shown in modal window
+        function ModalCtrHighchart(Xserie, Yserie, Type, IsMonth) {
+            var chart;
+            var days = IsMonth == true ? Xserie.length - 1 : Xserie.length - 1.999;
+            $('#modalheader').html(Type);
+            var container_modalchart = new Highcharts.chart('modalChart', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: Type
+                },
+
+                xAxis: {
+                    categories: Xserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: "Click-Through Rate (%)",
+                    }
+                },
+                tooltip: {
+                    valueSuffix: "%"
+                },
+                series: [{
+                    name: Type,
+                    data: Yserie
+                }]
+            });
+        }
+        //CPC Chart shown in modal window
+        function ModalCpcHighchart(Xserie, Yserie, Type, IsMonth) {
+            var chart;
+            var days = IsMonth == true ? Xserie.length - 1 : Xserie.length - 1.999;
+            $('#modalheader').html(Type);
+            var container_modalchart = new Highcharts.chart('modalChart', {
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: Type
+                },
+
+                xAxis: {
+                    categories: Xserie
+                },
+                yAxis: {
+                    title: {
+                        enabled: true,
+                        text: "Cost Per Click ($)",
+                    }
+                },
+                tooltip: {
+                    valueSuffix: "$"
+                },
+                series: [{
+                    name: Type,
+                    data: Yserie
+                }]
+            });
+        }
         // Remove css
         function Clear() {
             $('#divmsgerror').html("");

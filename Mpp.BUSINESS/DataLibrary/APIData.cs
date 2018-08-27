@@ -249,7 +249,7 @@ namespace Mpp.BUSINESS.DataLibrary
         {
             SqlCommand cmd = new SqlCommand();
             //cmd.CommandText = "SELECT top 5 m.MppUserID, r.ReportID from MppUser as m inner join Reports as r on m.MppUserID = r.MppUserID join Keywords as k on k.MppUserID = m.MppUserID where m.ProfileAccess != 0 and m.PlanStatus != 0 and r.UpdtBidStatus = 0 and cast(dateadd(day,30,ISNULL(ManuallyChangedOn,DATEADD(YEAR,-10,GETDATE()))) as date) < cast(getdate() as date) and r.IsLocallyProcessed = 0 and r.ReportDate = @date";
-            cmd.CommandText = "SELECT top 5 m.MppUserID, r.ReportID from MppUser as m inner join Reports as r on m.MppUserID = r.MppUserID where m.ProfileAccess != 0 and m.PlanStatus != 0 and r.UpdtBidStatus = 0 and r.IsLocallyProcessed = 0 and r.ReportDate = @date";
+            cmd.CommandText = "SELECT top 5000 m.MppUserID, r.ReportID from MppUser as m inner join Reports as r on m.MppUserID = r.MppUserID where m.ProfileAccess != 0 and m.PlanStatus != 0 and r.UpdtBidStatus = 0 and r.IsLocallyProcessed = 0 and r.ReportDate = @date"; //--Top 5 replace to 5000 by Tarun
             cmd.CommandType = CommandType.Text;
             cmd.Parameters.Add("@Date", SqlDbType.SmallDateTime).Value = DateTime.Today.AddDays(-3);
             DataTable dt = DataAccess.GetTable(cmd);

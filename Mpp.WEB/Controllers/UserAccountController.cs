@@ -49,7 +49,6 @@ namespace Mpp.WEB.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-         //   StripeServices.RenewTrialPlan();
             return View(new LoginViewModel());
         }
 

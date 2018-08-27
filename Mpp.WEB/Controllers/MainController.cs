@@ -94,6 +94,7 @@ namespace Mpp.WEB.Controllers
             //sort
             if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
             {
+                if(options.IsIgnoreZero)
                 v = SkipZeroCampaigns(sortColumn, v);
                 //for make sort simpler we will add Syste.Linq.Dynamic reference
                 v = v.OrderBy(sortColumn + " " + sortColumnDir);
@@ -280,7 +281,8 @@ namespace Mpp.WEB.Controllers
             //sort
             if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
             {
-                v = SkipZeroKeywords(sortColumn, v);
+                if (options.IsIgnoreZero)
+                    v = SkipZeroKeywords(sortColumn, v);
                 //for make sort simpler we will add Syste.Linq.Dynamic reference
                 v = v.OrderBy(sortColumn + " " + sortColumnDir);
             }
@@ -335,7 +337,8 @@ namespace Mpp.WEB.Controllers
             //sort
             if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
             {
-                v = SkipZeroAdGroups(sortColumn, v);
+                if (options.IsIgnoreZero)
+                    v = SkipZeroAdGroups(sortColumn, v);
                 //for make sort simpler we will add Syste.Linq.Dynamic reference
                 v = v.OrderBy(sortColumn + " " + sortColumnDir);
             }
@@ -488,6 +491,31 @@ namespace Mpp.WEB.Controllers
                     Sales = a.Sales,
                     Spend = a.Spend
                 }).ToList();
+                gmodel.impressions = res.Select(i => new ImpressionModel()
+                {
+                    ReportDay = i.ReportDay,
+                    Impressions = i.Impressions
+                }).ToList();
+                gmodel.clicks = res.Select(i => new ClickModel()
+                {
+                    ReportDay = i.ReportDay,
+                    Clicks = i.Click
+                }).ToList();
+
+                gmodel.ctr = res.Select(i => new CTRModel()
+                {
+                    ReportDay = i.ReportDay,
+                    Impressions = i.Impressions,
+                    Clicks=i.Click
+                }).ToList();
+                gmodel.cpc = res.Select(i => new CPCModel()
+                {
+                    ReportDay = i.ReportDay,
+                    Spend = i.Spend,
+                    Clicks = i.Click
+                }).ToList();
+
+
             }
             return Json(gmodel, JsonRequestBehavior.AllowGet);
         }
@@ -506,6 +534,18 @@ namespace Mpp.WEB.Controllers
                     break;
                 case "Acos":
                     obj = dashboardData.GetAcosChartData(SessionData.UserID, StartDate, EndDate);
+                    break;
+                case "Impressions":
+                    obj = dashboardData.GetImpressionsChartData(SessionData.UserID, StartDate, EndDate);
+                    break;
+                case "Clicks":
+                    obj = dashboardData.GetClicksChartData(SessionData.UserID, StartDate, EndDate);
+                    break;
+                case "CTR":
+                    obj = dashboardData.GetCTRChartData(SessionData.UserID, StartDate, EndDate);
+                    break;
+                case "CPC":
+                    obj = dashboardData.GetCPCChartData(SessionData.UserID, StartDate, EndDate);
                     break;
                 default:
                     break;

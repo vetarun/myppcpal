@@ -136,7 +136,6 @@ namespace Mpp.BUSINESS.Scheduler
                 Scheduler.ScheduleJob(Process_UserArchieveData, Process_UserArchieveData_Trigger);
                 //scheduler.Shutdown();
             }
-
             catch (Exception err)
             {
                 throw new Quartz.JobExecutionException(err);

@@ -203,7 +203,7 @@ namespace Mpp.BUSINESS.DataLibrary
         public List<GraphInventoryModel> GetChartData(Int32 userID, DateTime startdate, DateTime endDate)
         {
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT r.ReportDate,sum(i.Spend) as Spend,sum(i.Sales) as Sales from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
+            cmd.CommandText = "SELECT r.ReportDate,sum(i.Spend) as Spend,sum(i.Sales) as Sales  ,sum(i.Impressions) as Impressions, sum(i.Clicks) as Click  from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
             cmd.CommandType = CommandType.Text;
             cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
             cmd.Parameters.Add("@startdate", SqlDbType.SmallDateTime).Value = startdate.ToShortDateString();
@@ -272,6 +272,84 @@ namespace Mpp.BUSINESS.DataLibrary
             return dt.AsEnumerable().Select(r => ConvertToAcos(r)).ToList();
         }
 
+        /// <summary>
+        /// Get Impressions chart Data 
+        ///<param name="userID">user ID</param>
+        ///<param name="startDate">start Date</param>
+        ///<param name="endDate">end Date</param>
+        /// </summary>
+        /// <returns>Impressions</returns>
+        public List<ImpressionModel> GetImpressionsChartData(Int32 userID, DateTime startDate, DateTime endDate)
+        {
+            DataTable dt;
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT r.ReportDate,sum(i.Impressions) as Impressions from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@startdate", SqlDbType.SmallDateTime).Value = startDate.ToShortDateString();
+            cmd.Parameters.Add("@endDate", SqlDbType.SmallDateTime).Value = endDate.ToShortDateString();
+            dt = DataAccess.GetTable(cmd);
+            return dt.AsEnumerable().Select(r => ConvertToImpressions(r)).ToList();
+        }
+        /// <summary>
+        /// Get Clicks chart Data 
+        ///<param name="userID">user ID</param>
+        ///<param name="startDate">start Date</param>
+        ///<param name="endDate">end Date</param>
+        /// </summary>
+        /// <returns>Clicks</returns>
+        public List<ClickModel> GetClicksChartData(Int32 userID, DateTime startDate, DateTime endDate)
+        {
+            DataTable dt;
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT r.ReportDate, sum(i.Clicks) as Clicks from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@startdate", SqlDbType.SmallDateTime).Value = startDate.ToShortDateString();
+            cmd.Parameters.Add("@endDate", SqlDbType.SmallDateTime).Value = endDate.ToShortDateString();
+            dt = DataAccess.GetTable(cmd);
+            return dt.AsEnumerable().Select(r => ConvertToClicks(r)).ToList();
+        }
+
+        /// <summary>
+        /// Get CTR chart Data 
+        ///<param name="userID">user ID</param>
+        ///<param name="startDate">start Date</param>
+        ///<param name="endDate">end Date</param>
+        /// </summary>
+        /// <returns>CTR</returns>
+        public List<CTRModel> GetCTRChartData(Int32 userID, DateTime startDate, DateTime endDate)
+        {
+            DataTable dt;
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT r.ReportDate, sum(i.Clicks) as Clicks ,sum(i.Impressions) as Impressions  from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@startdate", SqlDbType.SmallDateTime).Value = startDate.ToShortDateString();
+            cmd.Parameters.Add("@endDate", SqlDbType.SmallDateTime).Value = endDate.ToShortDateString();
+            dt = DataAccess.GetTable(cmd);
+            return dt.AsEnumerable().Select(r => ConvertToCTR(r)).ToList();
+        }
+
+        /// <summary>
+        /// Get CPC chart Data 
+        ///<param name="userID">user ID</param>
+        ///<param name="startDate">start Date</param>
+        ///<param name="endDate">end Date</param>
+        /// </summary>
+        /// <returns>CPC</returns>
+        public List<CPCModel> GetCPCChartData(Int32 userID, DateTime startDate, DateTime endDate)
+        {
+            DataTable dt;
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT r.ReportDate,sum(i.Spend) as Spend,sum(i.Clicks) as Clicks from Reports r INNER JOIN ProductsInventory i on r.ReportID = i.ReportID WHERE r.MppUserID=@userID and i.RecordType =1 and r.ReportDate BETWEEN @startdate and @endDate group by r.ReportDate";
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@startdate", SqlDbType.SmallDateTime).Value = startDate.ToShortDateString();
+            cmd.Parameters.Add("@endDate", SqlDbType.SmallDateTime).Value = endDate.ToShortDateString();
+            dt = DataAccess.GetTable(cmd);
+            return dt.AsEnumerable().Select(r => ConvertToCPC(r)).ToList();
+        }
         /// <summary>
         /// Get Alerts Data 
         ///<param name="userID">user ID</param>
@@ -429,6 +507,43 @@ namespace Mpp.BUSINESS.DataLibrary
                 Spend = System.Math.Round(row.Field<Decimal>("Spend"), 2, MidpointRounding.AwayFromZero),
             };
         }
+        private ImpressionModel ConvertToImpressions(DataRow row)
+        {
+            return new ImpressionModel()
+            {
+                ReportDay = row.Field<DateTime>("ReportDate"),
+                Impressions  = row.Field<Int32>("Impressions")
+               
+            };
+        }
+        private ClickModel ConvertToClicks(DataRow row)
+        {
+            return new ClickModel()
+            {
+                ReportDay = row.Field<DateTime>("ReportDate"),
+                Clicks = row.Field<Int32>("Clicks")
+
+            };
+        }
+        private CTRModel ConvertToCTR(DataRow row)
+        {
+            return new CTRModel()
+            {
+                ReportDay = row.Field<DateTime>("ReportDate"),
+                Clicks  = row.Field<Int32>("Clicks"),
+                Impressions=row.Field<Int32>("Impressions")                
+            };
+        }
+
+        private CPCModel ConvertToCPC(DataRow row)
+        {
+            return new CPCModel()
+            {
+                ReportDay = row.Field<DateTime>("ReportDate"),
+                Clicks = row.Field<Int32>("Clicks"),
+                Spend = row.Field<decimal>("Spend")
+            };
+        }
 
         private GraphInventoryModel ConvertToInventory(DataRow row)
         {
@@ -436,7 +551,9 @@ namespace Mpp.BUSINESS.DataLibrary
             {
                 ReportDay = row.Field<DateTime>("ReportDate"),
                 Spend = System.Math.Round(row.Field<Decimal>("Spend"), 2, MidpointRounding.AwayFromZero),
-                Sales = System.Math.Round(row.Field<Decimal>("Sales"), 2, MidpointRounding.AwayFromZero)
+                Sales = System.Math.Round(row.Field<Decimal>("Sales"), 2, MidpointRounding.AwayFromZero),
+                Impressions=row.Field<Int32>("Impressions"),
+                Click=row.Field<Int32>("Click")
             };
         }
 

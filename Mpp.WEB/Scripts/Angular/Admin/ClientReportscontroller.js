@@ -17,7 +17,7 @@ app.controller("ClientReportscontroller", ['$scope', '$window', '$filter', 'sett
     $scope.selectedClient = 0;
     $scope.validDate = true;
 
-    $("#srchClient").autocomplete({
+    $("#srchClient").autocomplete({        
         minLength: 0,
         select: function (event, ui) {
             event.preventDefault();
@@ -57,7 +57,8 @@ app.controller("ClientReportscontroller", ['$scope', '$window', '$filter', 'sett
     }
 
     $scope.GetReportDates = function (userId) {
-        
+        debugger;
+        //userId = 40;
         $scope.reportspinner = true;
         var repData = settingService.GetReportDates(userId);
         repData.then(function (res) {

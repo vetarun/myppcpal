@@ -1226,6 +1226,18 @@
     height: 660px;
 }
 
+.chart-section {
+    padding: 15px 0px;
+    background: #0297d9;
+}
+
+.paddingtop-15 {
+    padding-top: 15px !important;
+}
+.paddingbottom-15 {
+    padding-bottom:15px !important;
+}
+
 @-webkit-keyframes fadeIn {
     from {
         opacity: 0;
@@ -1290,3 +1302,17 @@
         top: 13px;
         font-size: 18px;
     }
+.ignore_zero {
+    position: absolute;
+    padding: 10px;
+    top: -40px;
+    left: 15px;
+}
+
+    .ignore_zero input {
+        position: relative;
+        top: 2px;
+    }
+.dashboardTabs {
+    position: relative;
+}
